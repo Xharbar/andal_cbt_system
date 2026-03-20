@@ -22,25 +22,23 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       // title: const Text("Register Student"),
-      constraints: BoxConstraints(maxWidth: 400),
+      constraints: BoxConstraints(maxWidth: 400, maxHeight: 700),
       content: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Image.asset(
-                "lib/assets/images/register_student.png",
-                fit: BoxFit.contain,
-              ),
+            Image.asset(
+              "lib/assets/images/register_student.png",
+              fit: BoxFit.contain,
             ),
+            SizedBox(height: 10.0),
             Divider(
               thickness: 1,
               color: Colors.white54,
               indent: 8.0,
               endIndent: 8.0,
             ),
-            SizedBox(width: 10),
             Expanded(
               child: Form(
                 key: _newStudentKey,
@@ -88,7 +86,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                       validator: (uClass) =>
                           uClass == null ? 'Please select your class' : null,
                     ),
-                    SizedBox(height: 25),
+                    SizedBox(height: 15),
                     SizedBox(
                       width: double.maxFinite,
                       height: 50,
@@ -108,13 +106,23 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                         label: Text("Save", style: TextStyle(fontSize: 16)),
                       ),
                     ),
-                    /*SizedBox(
+                    SizedBox(height: 10.0),
+                    SizedBox(
                       width: double.maxFinite,
+                      height: 50,
                       child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context).colorScheme.primary.withAlpha(10),
+                          ),
+                        ),
                         onPressed: () => Navigator.pop(context),
-                        child: const Text("Cancel"),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                    ),*/
+                    ),
                   ],
                 ),
               ),
@@ -122,26 +130,6 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
           ],
         ),
       ),
-      /*actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
-        ),
-        FilledButton(
-          onPressed: () {
-            final newStudent = Student(
-              DateTime.now().toString(),
-              nameCtrl.text,
-              regCtrl.text,
-              _selectedClass!,
-              generatePasscode(), // Auto-generate on creation
-              true,
-            );
-            Navigator.pop(context, newStudent);
-          },
-          child: const Text("Save"),
-        ),
-      ],*/
     );
   }
 }
