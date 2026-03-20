@@ -1,0 +1,35 @@
+{
+    "name": "cbt_admin_section",
+    "short_name": "cbt_admin_section",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "The **Admin Section** of the CBT system is the central hub where administrators manage students, teachers, exams, and data. It allows secure login, creation of student profiles with unique exam passcodes, collection and organization of student scores by subject, retrieval of teacher-uploaded questions and configurations from the server (with offline availability during exams), and creation of teacher profiles with subject assignments. All data is synchronized with the server to ensure smooth exam operations and reliable record-keeping.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

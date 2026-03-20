@@ -1,0 +1,537 @@
+// ==========================================
+// 4. Questions/Exam Screen
+// ==========================================
+
+/*class ExamScreen extends StatefulWidget {
+  const ExamScreen({super.key});
+
+  @override
+  State<ExamScreen> createState() => _ExamScreenState();
+}
+
+class _ExamScreenState extends State<ExamScreen> {
+  int _currentIndex = 0;
+  // Map to store answers: <QuestionIndex, OptionIndex>
+  final Map<int, int> _userAnswers = {};
+
+  // Timer Logic
+  late Timer _timer;
+  int _remainingSeconds = 600; // 10 minutes
+
+  final Battery _battery = Battery();
+  int _batteryLevel = 100;
+  BatteryState _batteryState = BatteryState.full;
+  StreamSubscription<BatteryState>? _batterySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+
+    // 2. INSERT BATTERY INITIALIZATION
+    _initBattery();
+  }
+
+  // 3. INSERT BATTERY HELPER METHODS
+  void _initBattery() {
+    // Get initial level
+    _battery.batteryLevel.then((level) {
+      if (mounted) setState(() => _batteryLevel = level);
+    });
+
+    // Listen for changes (charging/discharging)
+    _batterySubscription = _battery.onBatteryStateChanged.listen((state) {
+      _battery.batteryLevel.then((level) {
+        if (mounted) {
+          setState(() {
+            _batteryState = state;
+            _batteryLevel = level;
+          });
+        }
+      });
+    });
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+      } else {
+        _timer.cancel();
+        _submitTest();
+      }
+    });
+  }
+
+  String get _timerText {
+    final minutes = (_remainingSeconds / 60).floor().toString().padLeft(2, '0');
+    final seconds = (_remainingSeconds % 60).toString().padLeft(2, '0');
+    return "$minutes:$seconds";
+  }
+
+  void _submitTest() {
+    _timer.cancel();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ResultScreen(questions: mockQuestions, userAnswers: _userAnswers),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final question = mockQuestions[_currentIndex];
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      // Top App Bar
+      appBar: AppBar(
+        title: const Text("Flutter Proficiency Test"),
+        centerTitle: false,
+        backgroundColor: colorScheme.surfaceContainer,
+        actions: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: _remainingSeconds < 60
+                  ? colorScheme.errorContainer
+                  : colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.timer_outlined,
+                  color: _remainingSeconds < 60
+                      ? colorScheme.onErrorContainer
+                      : colorScheme.onPrimaryContainer,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _timerText,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: _remainingSeconds < 60
+                        ? colorScheme.onErrorContainer
+                        : colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12), // Spacing
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: colorScheme
+                  .surfaceContainerHigh, // Different color to distinguish from timer
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  // Dynamic Icon based on state
+                  _batteryState == BatteryState.charging
+                      ? Icons.battery_charging_full
+                      : Icons.battery_std,
+                  size: 20,
+                  color: _batteryLevel < 20
+                      ? colorScheme.error
+                      : colorScheme.onSurface,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  "$_batteryLevel%",
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: _batteryLevel < 20
+                        ? colorScheme.error
+                        : colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: Row(
+        children: [
+          // Left Navigation Drawer (Persistent)
+          NavigationDrawer(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (int index) {
+              setState(() => _currentIndex = index);
+            },
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+                child: Text(
+                  'Questions',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              // Generating navigation items dynamically
+              ...List.generate(mockQuestions.length, (index) {
+                final isAnswered = _userAnswers.containsKey(index);
+                return NavigationDrawerDestination(
+                  icon: Icon(
+                    isAnswered
+                        ? Icons.check_circle_outline
+                        : Icons.circle_outlined,
+                  ),
+                  selectedIcon: Icon(
+                    isAnswered ? Icons.check_circle : Icons.circle,
+                  ),
+                  label: Text('Question ${index + 1}'),
+                );
+              }),
+            ],
+          ),
+
+          // Main Content Area
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Question Text
+                        Text(
+                          "Question ${_currentIndex + 1} of ${mockQuestions.length}",
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(color: colorScheme.secondary),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          question.text,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Options
+                        ...List.generate(question.options.length, (optIndex) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: RadioListTile<int>(
+                              value: optIndex,
+                              groupValue: _userAnswers[_currentIndex],
+                              title: Text(question.options[optIndex]),
+                              onChanged: (val) {
+                                setState(() {
+                                  _userAnswers[_currentIndex] = val!;
+                                });
+                              },
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(
+                                  color: colorScheme.outlineVariant,
+                                ),
+                              ),
+                              tileColor: _userAnswers[_currentIndex] == optIndex
+                                  ? colorScheme.secondaryContainer
+                                  : null,
+                              activeColor: colorScheme.primary,
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Bottom Action Bar
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    border: Border(
+                      top: BorderSide(color: colorScheme.outlineVariant),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: _currentIndex > 0
+                            ? () => setState(() => _currentIndex--)
+                            : null,
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text("Previous"),
+                      ),
+
+                      Row(
+                        children: [
+                          if (_currentIndex < mockQuestions.length - 1)
+                            FilledButton.icon(
+                              onPressed: () => setState(() => _currentIndex++),
+                              icon: const Icon(Icons.arrow_forward),
+                              label: const Text("Next"),
+                            )
+                          else
+                            FilledButton.icon(
+                              onPressed: _submitTest,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: colorScheme.primary,
+                                foregroundColor: colorScheme.onPrimary,
+                              ),
+                              icon: const Icon(Icons.check),
+                              label: const Text("Submit Test"),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}*/
+
+
+
+// ==========================================
+// Retake Test button from Result Screen
+// ==========================================
+const SizedBox(width: 16),
+FilledButton(
+  onPressed: () {
+    Navigator.pushReplacement(
+      context,
+        MaterialPageRoute(
+  builder: (context) => const ExamScreen(),
+ ),
+                              );
+                            },
+                            child: const Text("Retake Test"),
+                          ),
+
+
+
+
+/*final List<Question> mockQuestions = [
+  Question(
+    id: 1,
+    text: "Which widget is used to create an immutable layout in Flutter?",
+    options: [
+      "StatelessWidget",
+      "StatefulWidget",
+      "InheritedWidget",
+      "Provider",
+    ],
+    correctIndex: 0,
+  ),
+  Question(
+    id: 2,
+    text: "What is the primary language used for Flutter development?",
+    options: ["Java", "Kotlin", "Dart", "Swift"],
+    correctIndex: 2,
+  ),
+  Question(
+    id: 3,
+    text: "Which design system is Flutter 3 focused on?",
+    options: ["Cupertino", "Material 2", "Material 3", "Fluent UI"],
+    correctIndex: 2,
+  ),
+  Question(
+    id: 4,
+    text: "How do you access the navigation arguments in a destination widget?",
+    options: [
+      "ModalRoute.of()",
+      "Navigator.push()",
+      "RouteSettings()",
+      "context.read()",
+    ],
+    correctIndex: 0,
+  ),
+  Question(
+    id: 5,
+    text: "Which command runs the app in debug mode?",
+    options: [
+      "flutter build",
+      "flutter run",
+      "flutter doctor",
+      "flutter clean",
+    ],
+    correctIndex: 1,
+  ),
+];*/
+
+
+
+Default Bottom Pagination
+
+
+                                /*itemBuilder: (context, index) {
+                                  final isActive = _currentIndex == index;
+                                  return InkWell(
+                                    onTap: () =>
+                                        setState(() => _currentIndex = index),
+                                    child: Container(
+                                      width: 45,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        color: isActive
+                                            ? darkGreen
+                                            : Colors.transparent,
+                                        border: Border.all(
+                                          color: isActive
+                                              ? darkGreen
+                                              : Colors.grey[300]!,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "${index + 1}",
+                                          style: TextStyle(
+                                            color: isActive
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },*/
+
+
+
+
+
+  /*
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() => _remainingSeconds--);
+      } else {
+        _timer.cancel();
+        _submitTest();
+      }
+    });
+  }
+*/
+
+
+
+
+
+          // Review Side
+          /*Expanded(
+            flex: 3,
+            child: Container(
+              color: colorScheme.surfaceContainerLow,
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Review Answers",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: questions.length,
+                      separatorBuilder: (c, i) => const SizedBox(height: 16),
+                      itemBuilder: (context, index) {
+                        final question = questions[index];
+                        final userAnswerIndex = userAnswers[index];
+                        final isCorrect =
+                            userAnswerIndex == question.correctIndex;
+
+                        return Card(
+                          elevation: 0,
+                          color: colorScheme.surface,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 12,
+                                      backgroundColor: isCorrect
+                                          ? Colors.green.withOpacity(0.2)
+                                          : colorScheme.error.withOpacity(0.2),
+                                      child: Icon(
+                                        isCorrect ? Icons.check : Icons.close,
+                                        size: 16,
+                                        color: isCorrect
+                                            ? Colors.green
+                                            : colorScheme.error,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        "Q${index + 1}: ${question.text}",
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleSmall,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                // Display Logic for Review
+                                if (userAnswerIndex != null)
+                                  Text(
+                                    "Your Answer: ${question.options[userAnswerIndex]}",
+                                    style: TextStyle(
+                                      color: isCorrect
+                                          ? Colors.green
+                                          : colorScheme.error,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                else
+                                  Text(
+                                    "Your Answer: Skipped",
+                                    style: TextStyle(
+                                      color: colorScheme.outline,
+                                    ),
+                                  ),
+                                if (!isCorrect)
+                                  Text(
+                                    "Correct Answer: ${question.options[question.correctIndex]}",
+                                    style: TextStyle(
+                                      color: colorScheme.primary,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),*/
