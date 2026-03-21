@@ -101,10 +101,13 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                         setState(() => _selectedClassFilter = val!),
                   ),
                   const SizedBox(width: 16),
-                  FilledButton.icon(
-                    onPressed: _addStudent,
-                    icon: const Icon(Icons.add),
-                    label: const Text("New Student"),
+                  SizedBox(
+                    height: 50,
+                    child: FilledButton.icon(
+                      onPressed: _addStudent,
+                      icon: const Icon(Icons.add),
+                      label: const Text("New Student"),
+                    ),
                   ),
                 ],
               ),
@@ -114,7 +117,10 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
           Expanded(
             child: Card(
               child: students.isEmpty
-                  ? NoRegisteredStudent()
+                  ? Container(
+                      constraints: BoxConstraints.expand(),
+                      child: NoRegisteredStudent(onAddStudent: _addStudent),
+                    )
                   : ListView.separated(
                       itemCount: filteredStudents.length,
                       separatorBuilder: (c, i) => const Divider(),

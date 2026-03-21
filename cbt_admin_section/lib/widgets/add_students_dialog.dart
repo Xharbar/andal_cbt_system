@@ -62,6 +62,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                     const SizedBox(height: 10),
                     TextFormField(
                       controller: regCtrl,
+                      maxLength: 4,
                       decoration: InputDecoration(
                         labelText: "Reg Number",
                         prefixText: idPrefix,
@@ -92,10 +93,11 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                       height: 50,
                       child: FilledButton.icon(
                         onPressed: () {
+                          String studentID = idPrefix + regCtrl.text;
                           final newStudent = Student(
                             DateTime.now().toString(),
                             nameCtrl.text,
-                            regCtrl.text,
+                            studentID,
                             _selectedClass!,
                             generatePasscode(), // Auto-generate on creation
                             true,
