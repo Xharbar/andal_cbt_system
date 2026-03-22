@@ -1,3 +1,4 @@
 20/03/2026 - 22:20 /> Modified the "add_students_dialog.dart": Added an image, and made some minor adjustment.
 21/03/2026 - 10:20 /> Started working on the "no_registered_student.dart": Creating the "No registered Student" widget.
 21/03/2026 - 20:20 /> Finished the "no_registered_student.dart" widget, and modified the Student details.
+22/03/2026 - 22:15 /> Started working on the "no_registered_teacher.dart": Creating the "No registered teacher" widget.

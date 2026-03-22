@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:cbt_admin_section/widgets/no_registered_teacher.dart';
+
 class Teacher {
   String id;
   String fullName;
@@ -21,15 +23,10 @@ class TeacherManagementPage extends StatefulWidget {
 }
 
 class _TeacherManagementPageState extends State<TeacherManagementPage> {
-  final List<Teacher> _teachers = [
-    Teacher("1", "Mr. Anderson", "anderson@school.com", "Mathematics"),
-    Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
-  ];
-
   void _addTeacher() {
     // Simplified add logic
     setState(() {
-      _teachers.add(Teacher("3", "New Teacher", "new@school.com", "Physics"));
+      teachers.add(Teacher("3", "New Teacher", "new@school.com", "Physics"));
     });
   }
 
@@ -45,58 +42,71 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
             children: [
               Text(
                 "Teacher Management",
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-              FilledButton.icon(
-                onPressed: _addTeacher,
-                icon: const Icon(Icons.person_add),
-                label: const Text("Add Teacher"),
-              ),
+              ?teachers.isNotEmpty
+                  ? FilledButton.icon(
+                      onPressed: _addTeacher,
+                      icon: const Icon(Icons.person_add),
+                      label: const Text("Add Teacher"),
+                    )
+                  : null,
             ],
           ),
           const SizedBox(height: 24),
-          Expanded(
-            child: SingleChildScrollView(
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text("Name")),
-                  DataColumn(label: Text("Email")),
-                  DataColumn(label: Text("Subject Assigned")),
-                  DataColumn(label: Text("Actions")),
-                ],
-                rows: _teachers
-                    .map(
-                      (t) => DataRow(
-                        cells: [
-                          DataCell(Text(t.fullName)),
-                          DataCell(Text(t.email)),
-                          DataCell(Text(t.subjectAssigned)),
-                          DataCell(
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {},
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
+          teachers.isNotEmpty
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text("Name")),
+                        DataColumn(label: Text("Email")),
+                        DataColumn(label: Text("Subject Assigned")),
+                        DataColumn(label: Text("Actions")),
+                      ],
+                      rows: teachers
+                          .map(
+                            (t) => DataRow(
+                              cells: [
+                                DataCell(Text(t.fullName)),
+                                DataCell(Text(t.email)),
+                                DataCell(Text(t.subjectAssigned)),
+                                DataCell(
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        onPressed: () {},
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    ],
                                   ),
-                                  onPressed: () {},
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-          ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Center(
+                    child: NoRegisteredTeacher(onAddTeacher: () {}),
+                  ),
+                ),
         ],
       ),
     );
   }
 }
+
+List<Teacher> teachers = [
+  // Teacher("1", "Mr. Anderson", "anderson@school.com", "Mathematics"),
+  // Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
+];

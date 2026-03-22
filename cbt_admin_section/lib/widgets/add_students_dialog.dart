@@ -31,6 +31,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
             Image.asset(
               "lib/assets/images/register_student.png",
               fit: BoxFit.contain,
+              height: 205,
             ),
             SizedBox(height: 10.0),
             Divider(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class NoRegisteredStudent extends StatelessWidget {
-  const NoRegisteredStudent({super.key, required this.onAddStudent});
+class NoRegisteredTeacher extends StatelessWidget {
+  const NoRegisteredTeacher({super.key, required this.onAddTeacher});
 
-  final VoidCallback onAddStudent;
+  final VoidCallback onAddTeacher;
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +12,13 @@ class NoRegisteredStudent extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         Image.asset(
-          "lib/assets/images/no_student.png",
+          "lib/assets/images/no_teacher.png",
           fit: BoxFit.contain,
           height: 300,
           width: 300,
         ),
         Text(
-          "No students are currently registered. \nPlease click the Add Student button below to register a student.",
+          "No teachers are currently registered. \nPlease click the Add Teacher button below to register a teacher.",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18,
@@ -30,9 +30,9 @@ class NoRegisteredStudent extends StatelessWidget {
           height: 50,
           width: 200,
           child: FilledButton.icon(
-            onPressed: onAddStudent,
-            label: Text("Add Student", style: TextStyle(fontSize: 16)),
-            icon: const Icon(Icons.add, size: 20),
+            onPressed: onAddTeacher,
+            label: Text("Add Teacher", style: TextStyle(fontSize: 16)),
+            icon: const Icon(Icons.person_add, size: 20),
           ),
         ),
       ],

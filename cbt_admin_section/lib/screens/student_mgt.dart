@@ -40,6 +40,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
   void _addStudent() async {
     final Student? returnedStudent = await showDialog<Student>(
       context: context,
+      barrierDismissible: false,
       builder: (context) => const AddStudentsDialog(),
     );
 
@@ -80,36 +81,41 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
             children: [
               Text(
                 "Student Management",
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               Spacer(),
               Row(
-                children: [
-                  DropdownMenu<String>(
-                    initialSelection: "All",
-                    label: const Text("Filter by Class"),
-                    dropdownMenuEntries: const [
-                      DropdownMenuEntry(value: "All", label: "All Classes"),
-                      DropdownMenuEntry(value: "JSS 1", label: "JSS 1"),
-                      DropdownMenuEntry(value: "JSS 2", label: "JSS 2"),
-                      DropdownMenuEntry(value: "JSS 3", label: "JSS 3"),
-                      DropdownMenuEntry(value: "SSS 1", label: "SSS 1"),
-                      DropdownMenuEntry(value: "SSS 2", label: "SSS 2"),
-                      DropdownMenuEntry(value: "SSS 3", label: "SSS 3"),
-                    ],
-                    onSelected: (val) =>
-                        setState(() => _selectedClassFilter = val!),
-                  ),
-                  const SizedBox(width: 16),
-                  SizedBox(
-                    height: 50,
-                    child: FilledButton.icon(
-                      onPressed: _addStudent,
-                      icon: const Icon(Icons.add),
-                      label: const Text("New Student"),
-                    ),
-                  ),
-                ],
+                children: students.isEmpty
+                    ? []
+                    : [
+                        DropdownMenu<String>(
+                          initialSelection: "All",
+                          label: const Text("Filter by Class"),
+                          dropdownMenuEntries: const [
+                            DropdownMenuEntry(
+                              value: "All",
+                              label: "All Classes",
+                            ),
+                            DropdownMenuEntry(value: "JSS 1", label: "JSS 1"),
+                            DropdownMenuEntry(value: "JSS 2", label: "JSS 2"),
+                            DropdownMenuEntry(value: "JSS 3", label: "JSS 3"),
+                            DropdownMenuEntry(value: "SSS 1", label: "SSS 1"),
+                            DropdownMenuEntry(value: "SSS 2", label: "SSS 2"),
+                            DropdownMenuEntry(value: "SSS 3", label: "SSS 3"),
+                          ],
+                          onSelected: (val) =>
+                              setState(() => _selectedClassFilter = val!),
+                        ),
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          height: 50,
+                          child: FilledButton.icon(
+                            onPressed: _addStudent,
+                            icon: const Icon(Icons.add),
+                            label: const Text("New Student"),
+                          ),
+                        ),
+                      ],
               ),
             ],
           ),
