@@ -96,8 +96,10 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                   ),
                 )
               : Expanded(
-                  child: Center(
-                    child: NoRegisteredTeacher(onAddTeacher: () {}),
+                  child: Card(
+                    child: Center(
+                      child: NoRegisteredTeacher(onAddTeacher: () {}),
+                    ),
                   ),
                 ),
         ],
