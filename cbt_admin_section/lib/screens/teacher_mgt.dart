@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/widgets/no_registered_teacher.dart';
+import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
 
 class Teacher {
   String id;
@@ -23,11 +24,22 @@ class TeacherManagementPage extends StatefulWidget {
 }
 
 class _TeacherManagementPageState extends State<TeacherManagementPage> {
-  void _addTeacher() {
+  void _addTeacher() async {
     // Simplified add logic
-    setState(() {
+    /*setState(() {
       teachers.add(Teacher("3", "New Teacher", "new@school.com", "Physics"));
-    });
+    });*/
+    final Teacher? returnedTeacher = await showDialog<Teacher>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AddTeacherDialog(),
+    );
+
+    if (returnedTeacher != null) {
+      setState(() {
+        // teachers.add(returnedTeacher);
+      });
+    }
   }
 
   @override
@@ -98,7 +110,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
               : Expanded(
                   child: Card(
                     child: Center(
-                      child: NoRegisteredTeacher(onAddTeacher: () {}),
+                      child: NoRegisteredTeacher(onAddTeacher: _addTeacher),
                     ),
                   ),
                 ),

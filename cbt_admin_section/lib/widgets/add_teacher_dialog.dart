@@ -18,22 +18,32 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
     bool obscurePassword = true;
 
     return AlertDialog(
-      content: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Image.asset(
-              "lib/assets/add_teacher.png",
-              fit: BoxFit.contain,
-              height: 205,
+      constraints: BoxConstraints(minWidth: 400, maxWidth: 400, maxHeight: 700),
+      content: Column(
+        children: [
+          Image.asset(
+            "lib/assets/images/add_teacher.png",
+            fit: BoxFit.contain,
+            height: 250,
+          ),
+          Divider(
+            color: Colors.white54,
+            thickness: 1.0,
+            indent: 8.0,
+            endIndent: 8.0,
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Register Teacher",
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
             ),
-            Divider(
-              color: Colors.white54,
-              thickness: 1.0,
-              indent: 8.0,
-              endIndent: 8.0,
-            ),
-            Form(
+          ),
+          SizedBox(height: 10.0),
+          Expanded(
+            child: Form(
               key: newTeacherKey,
               child: Column(
                 children: [
@@ -83,11 +93,66 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                       ),
                     ),
                   ),
+                  /*Expanded(
+                    child: GridView.builder(
+                      // SliverGridDelegate controls the number of columns and spacing
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // 2 columns
+                            crossAxisSpacing: 16, // Horizontal space
+                            mainAxisSpacing: 16, // Vertical space
+                            childAspectRatio:
+                                1.1, // Makes the tiles slightly rectangular
+                          ),
+                      itemCount: 2, // subjects.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green[700],
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.green.withAlpha(50),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {},
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.menu_book_rounded,
+                                    size: 40,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "subjects[index]",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),*/
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

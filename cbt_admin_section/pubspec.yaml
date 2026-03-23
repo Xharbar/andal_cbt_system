@@ -67,6 +67,7 @@ flutter:
     - lib/assets/images/register_student.png
     - lib/assets/images/no_student.png
     - lib/assets/images/no_teacher.png
+    - lib/assets/images/add_teacher.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
