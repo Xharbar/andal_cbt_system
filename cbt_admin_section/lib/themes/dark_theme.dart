@@ -48,5 +48,23 @@ ThemeData darkTheme() {
         fontFamily: 'GoogleSans',
       ),
     ),
+    navigationRailTheme: NavigationRailThemeData(
+      backgroundColor: Color(0xff1a1a1a),
+      selectedIconTheme: IconThemeData(color: Colors.white),
+      unselectedIconTheme: IconThemeData(color: Colors.white70),
+      selectedLabelTextStyle: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'GoogleSans',
+        fontSize: 14.0,
+      ),
+      unselectedLabelTextStyle: TextStyle(
+        color: Colors.white70,
+        fontFamily: 'GoogleSans',
+        fontSize: 14.0,
+      ),
+    ),
   );
 }
+
+//Color(0xff81287b)
