@@ -16,6 +16,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
     final teacherPassword = TextEditingController();
     final confirmPassword = TextEditingController();
     bool obscurePassword = true;
+    IconData visibilityIcon = Icons.visibility;
 
     return AlertDialog(
       constraints: BoxConstraints(minWidth: 1000, maxHeight: 700),
@@ -71,14 +72,11 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                             decoration: InputDecoration(
                               label: Text("Password"),
                               suffixIcon: IconButton(
-                                icon: Icon(
-                                  obscurePassword
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
+                                icon: Icon(visibilityIcon),
                                 onPressed: () {
                                   setState(() {
                                     obscurePassword = !obscurePassword;
+                                    visibilityIcon = Icons.visibility_off;
                                   });
                                 },
                               ),

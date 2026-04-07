@@ -16,6 +16,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _idController = TextEditingController();
   final _passController = TextEditingController();
+  bool obscureText = true;
 
   void _login() {
     // Mock Auth
@@ -125,10 +126,16 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                               const SizedBox(height: 16),
                               TextFormField(
                                 controller: _passController,
-                                obscureText: true,
-                                decoration: const InputDecoration(
+                                obscureText: obscureText,
+                                decoration: InputDecoration(
                                   labelText: "Password",
                                   prefixIcon: Icon(Icons.lock),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      obscureText = !obscureText;
+                                    },
+                                    icon: Icon(Icons.visibility),
+                                  ),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
