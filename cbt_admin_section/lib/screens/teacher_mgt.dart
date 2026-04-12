@@ -68,42 +68,50 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
           const SizedBox(height: 24),
           teachers.isNotEmpty
               ? Expanded(
-                  child: SingleChildScrollView(
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text("Name")),
-                        DataColumn(label: Text("Email")),
-                        DataColumn(label: Text("Subject Assigned")),
-                        DataColumn(label: Text("Actions")),
-                      ],
-                      rows: teachers
-                          .map(
-                            (t) => DataRow(
-                              cells: [
-                                DataCell(Text(t.fullName)),
-                                DataCell(Text(t.email)),
-                                DataCell(Text(t.subjectAssigned)),
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit),
-                                        onPressed: () {},
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                  child: Card(
+                    child: SingleChildScrollView(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                          columnSpacing: 30.0,
+                          columns: const [
+                            DataColumn(
+                              label: SizedBox(width: 100, child: Text("Name")),
                             ),
-                          )
-                          .toList(),
+                            DataColumn(label: Text("Email")),
+                            DataColumn(label: Text("Subject Assigned")),
+                            DataColumn(label: Text("Actions")),
+                          ],
+                          rows: teachers
+                              .map(
+                                (t) => DataRow(
+                                  cells: [
+                                    DataCell(Text(t.fullName)),
+                                    DataCell(Text(t.email)),
+                                    DataCell(Text(t.subjectAssigned)),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit),
+                                            onPressed: () {},
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {},
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
                     ),
                   ),
                 )
@@ -121,6 +129,11 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
 }
 
 List<Teacher> teachers = [
-  // Teacher("1", "Mr. Anderson", "anderson@school.com", "Mathematics"),
+  Teacher(
+    "1",
+    "Mr. Emmanuel Ayobami Shaba Digital Technology",
+    "anderson@school.com",
+    "Mathematics",
+  ),
   // Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
 ];

@@ -17,7 +17,7 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
 
   final List<Widget> _pages = [
     const StudentManagementPage(),
@@ -32,12 +32,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: _selectedIndex,
+            selectedIndex: selectedIndex,
             onDestinationSelected: (int index) =>
-                setState(() => _selectedIndex = index),
+                setState(() => selectedIndex = index),
             extended:
                 MediaQuery.of(context).size.width >
                 900, // Collapsible on smaller screens
+            minExtendedWidth: 190,
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.people),
@@ -58,7 +59,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ],
           ),
           const VerticalDivider(thickness: 1, width: 1),
-          Expanded(child: _pages[_selectedIndex]),
+          Expanded(child: _pages[selectedIndex]),
         ],
       ),
     );

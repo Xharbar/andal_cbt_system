@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:cbt_admin_section/screens/admin_dashboard.dart';
+import 'package:cbt_admin_section/screens/admin_home.dart';
 
 // ==========================================
 // LOGIN SCREEN
@@ -23,7 +25,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     if (_formKey.currentState!.validate()) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        MaterialPageRoute(builder: (_) => const AdminHome()),
       );
     }
   }
@@ -42,10 +44,10 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/assets/images/admin_background.png"),
+            image: AssetImage("lib/assets/images/ready-back-school.jpg"),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withAlpha(170),
+              Colors.black.withAlpha(130),
               BlendMode.darken,
             ),
           ),
