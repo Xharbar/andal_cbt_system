@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cbt_admin_section/screens/admin_dashboard.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
 
 // ==========================================

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
 import 'package:cbt_admin_section/widgets/no_registered_student.dart';
+import 'package:cbt_admin_section/screens/admin_home.dart';
 
 class Student {
   String id;
@@ -79,6 +80,12 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              IconButton(
+                onPressed: () => goHome(context),
+                icon: Icon(Icons.home_outlined),
+                iconSize: 35.0,
+              ),
+              SizedBox(width: 10.0),
               Text(
                 "Student Management",
                 style: Theme.of(context).textTheme.headlineMedium,

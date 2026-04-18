@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/widgets/no_registered_teacher.dart';
 import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
+import 'package:cbt_admin_section/screens/admin_home.dart';
 
 class Teacher {
   String id;
@@ -32,7 +33,10 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     final Teacher? returnedTeacher = await showDialog<Teacher>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AddTeacherDialog(),
+      builder: (context) => AddTeacherDialog(
+        onCancel: () {},
+        onSave: (Map<String, dynamic> p1) {},
+      ),
     );
 
     if (returnedTeacher != null) {
@@ -50,28 +54,41 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              IconButton(
+                onPressed: () => goHome(context),
+                icon: Icon(Icons.home_outlined),
+                iconSize: 35.0,
+              ),
+              SizedBox(width: 10.0),
               Text(
                 "Teacher Management",
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
+              Spacer(),
               ?teachers.isNotEmpty
-                  ? FilledButton.icon(
-                      onPressed: _addTeacher,
-                      icon: const Icon(Icons.person_add),
-                      label: const Text("Add Teacher"),
+                  ? SizedBox(
+                      height: 50.0,
+                      child: FilledButton.icon(
+                        onPressed: _addTeacher,
+                        icon: const Icon(Icons.person_add),
+                        label: const Text("Add Teacher"),
+                      ),
                     )
                   : null,
             ],
           ),
           const SizedBox(height: 24),
-          teachers.isNotEmpty
-              ? Expanded(
-                  child: Card(
+          if (teachers.isNotEmpty)
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Card(
                     child: SingleChildScrollView(
                       child: SizedBox(
                         width: double.infinity,
+                        height: double.infinity,
                         child: DataTable(
                           columnSpacing: 30.0,
                           columns: const [
@@ -114,14 +131,17 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       ),
                     ),
                   ),
-                )
-              : Expanded(
-                  child: Card(
-                    child: Center(
-                      child: NoRegisteredTeacher(onAddTeacher: _addTeacher),
-                    ),
-                  ),
+                ],
+              ),
+            )
+          else
+            Expanded(
+              child: Card(
+                child: Center(
+                  child: NoRegisteredTeacher(onAddTeacher: _addTeacher),
                 ),
+              ),
+            ),
         ],
       ),
     );
@@ -129,11 +149,11 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
 }
 
 List<Teacher> teachers = [
-  Teacher(
+  /*Teacher(
     "1",
     "Mr. Emmanuel Ayobami Shaba Digital Technology",
     "anderson@school.com",
     "Mathematics",
-  ),
+  ),*/
   // Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
 ];

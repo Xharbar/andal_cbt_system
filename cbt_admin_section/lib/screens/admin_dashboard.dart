@@ -10,14 +10,16 @@ import 'package:cbt_admin_section/screens/scoreboard.dart';
 // ==========================================
 
 class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({super.key});
+  AdminDashboard({super.key, required this.selectedIndex});
+
+  int selectedIndex = 0;
 
   @override
   State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-  int selectedIndex = 0;
+  // int selectedIndex = 0;
 
   final List<Widget> _pages = [
     const StudentManagementPage(),
@@ -32,9 +34,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: selectedIndex,
+            selectedIndex: widget.selectedIndex,
             onDestinationSelected: (int index) =>
-                setState(() => selectedIndex = index),
+                setState(() => widget.selectedIndex = index),
             extended:
                 MediaQuery.of(context).size.width >
                 900, // Collapsible on smaller screens
@@ -59,7 +61,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ],
           ),
           const VerticalDivider(thickness: 1, width: 1),
-          Expanded(child: _pages[selectedIndex]),
+          Expanded(child: _pages[widget.selectedIndex]),
         ],
       ),
     );

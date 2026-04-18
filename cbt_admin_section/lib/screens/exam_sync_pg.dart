@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:cbt_admin_section/screens/admin_home.dart';
+
 class ExamSyncStatus {
   String subject;
   int questionCount;
@@ -72,6 +74,12 @@ class _ExamSyncPageState extends State<ExamSyncPage> {
         children: [
           Row(
             children: [
+              IconButton(
+                onPressed: () => goHome(context),
+                icon: Icon(Icons.home_outlined),
+                iconSize: 35.0,
+              ),
+              SizedBox(width: 10.0),
               Text(
                 "Exam Preparation & Sync",
                 style: Theme.of(context).textTheme.headlineSmall,

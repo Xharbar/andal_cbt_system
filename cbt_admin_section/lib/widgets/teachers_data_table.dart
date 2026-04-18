@@ -7,7 +7,7 @@ class TeachersDataTable extends StatefulWidget {
   State<TeachersDataTable> createState() => _TeachersDataTableState();
 }
 
-List<Widget> teachers_details = [];
+List<Widget> teachersDetails = [];
 
 class _TeachersDataTableState extends State<TeachersDataTable> {
   @override

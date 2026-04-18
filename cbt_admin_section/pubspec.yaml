@@ -74,6 +74,7 @@ flutter:
     - lib/assets/images/scores_home.jpeg
     - lib/assets/images/ready-back-school.jpg
     - lib/assets/images/desk-with-books-stationery-clocks.jpg
+    - lib/assets/images/exam_sync.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

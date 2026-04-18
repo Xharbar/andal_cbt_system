@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:cbt_admin_section/screens/admin_home.dart';
+
 class ScoreRecord {
   String regNumber;
   String studentName;
@@ -66,6 +68,12 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              IconButton(
+                onPressed: () => goHome(context),
+                icon: Icon(Icons.home_outlined),
+                iconSize: 35.0,
+              ),
+              SizedBox(width: 10.0),
               Text(
                 "Scoreboard",
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -101,40 +109,43 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
           ),
           const SizedBox(height: 24),
           Expanded(
-            child: Card(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Scrollbar(
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("Reg Number")),
-                      DataColumn(label: Text("Student Name")),
-                      DataColumn(label: Text("Class")),
-                      DataColumn(label: Text("Subject")),
-                      DataColumn(label: Text("Score")),
-                      DataColumn(label: Text("Verdict")),
-                    ],
-                    rows: filteredScores.map((s) {
-                      bool passed = s.score >= 50;
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(s.regNumber)),
-                          DataCell(Text(s.studentName)),
-                          DataCell(Text(s.studentClass)),
-                          DataCell(Text(s.subject)),
-                          DataCell(Text("${s.score} / ${s.total}")),
-                          DataCell(
-                            Text(
-                              passed ? "PASS" : "FAIL",
-                              style: TextStyle(
-                                color: passed ? Colors.green : Colors.red,
-                                fontWeight: FontWeight.bold,
+            child: SizedBox(
+              width: double.infinity,
+              child: Card(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Scrollbar(
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text("Reg Number")),
+                        DataColumn(label: Text("Student Name")),
+                        DataColumn(label: Text("Class")),
+                        DataColumn(label: Text("Subject")),
+                        DataColumn(label: Text("Score")),
+                        DataColumn(label: Text("Verdict")),
+                      ],
+                      rows: filteredScores.map((s) {
+                        bool passed = s.score >= 50;
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(s.regNumber)),
+                            DataCell(Text(s.studentName)),
+                            DataCell(Text(s.studentClass)),
+                            DataCell(Text(s.subject)),
+                            DataCell(Text("${s.score} / ${s.total}")),
+                            DataCell(
+                              Text(
+                                passed ? "PASS" : "FAIL",
+                                style: TextStyle(
+                                  color: passed ? Colors.green : Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
