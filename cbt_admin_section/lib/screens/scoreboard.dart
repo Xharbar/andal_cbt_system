@@ -109,8 +109,7 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
           ),
           const SizedBox(height: 24),
           Expanded(
-            child: SizedBox(
-              width: double.infinity,
+            child: SizedBox.expand(
               child: Card(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,

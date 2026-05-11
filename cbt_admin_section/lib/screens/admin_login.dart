@@ -98,7 +98,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           size: 64,
                           color: Theme.of(context).colorScheme.primary,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         const Text(
                           "Admin Portal",
                           style: TextStyle(
@@ -106,7 +106,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 25),
                         Form(
                           key: _formKey,
                           child: Column(
@@ -124,7 +124,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 15),
                               TextFormField(
                                 controller: _passController,
                                 obscureText: obscureText,
@@ -145,7 +145,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 20),
                               SizedBox(
                                 width: double.infinity,
                                 height: 50,

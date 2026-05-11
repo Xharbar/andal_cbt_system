@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cbt_admin_section/widgets/glass_container.dart';
 
 class NoRegisteredStudent extends StatelessWidget {
   const NoRegisteredStudent({super.key, required this.onAddStudent});
@@ -26,13 +27,15 @@ class NoRegisteredStudent extends StatelessWidget {
           ),
         ),
         SizedBox(height: 15),
-        SizedBox(
-          height: 50,
-          width: 200,
-          child: FilledButton.icon(
-            onPressed: onAddStudent,
-            label: Text("Add Student", style: TextStyle(fontSize: 16)),
-            icon: const Icon(Icons.add, size: 20),
+        GlassContainer(
+          child: SizedBox(
+            height: 50,
+            width: 200,
+            child: FilledButton.icon(
+              onPressed: onAddStudent,
+              label: Text("Add Student", style: TextStyle(fontSize: 16)),
+              icon: const Icon(Icons.add, size: 20),
+            ),
           ),
         ),
       ],

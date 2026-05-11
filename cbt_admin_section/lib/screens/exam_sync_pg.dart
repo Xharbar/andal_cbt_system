@@ -47,18 +47,22 @@ class _ExamSyncPageState extends State<ExamSyncPage> {
   late final desktop = MediaQuery.of(context).size.width > 900;
 
   void _syncExam(int index) async {
+    final messenger = ScaffoldMessenger.of(context);
+
     // Simulate Fetching from Server
-    ScaffoldMessenger.of(context).showSnackBar(
+    messenger.showSnackBar(
       const SnackBar(content: Text("Fetching questions from Server...")),
     );
     await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
 
     setState(() {
       _exams[index].isSyncedLocal = true;
       _exams[index].lastUpdated = DateTime.now();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    messenger.showSnackBar(
       const SnackBar(
         content: Text("Exam synced successfully! Ready for offline use."),
       ),
@@ -85,11 +89,15 @@ class _ExamSyncPageState extends State<ExamSyncPage> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const Spacer(),
-              FilledButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.sync),
-                // label: Text(desktop ? "Sync Exams" : ""),
-                label: Text("Sync Exams"),
+              SizedBox(
+                height: 50,
+                child: FilledButton.icon(
+                  onPressed: () =>
+                      _syncExam(0), // For demo, sync the first exam
+                  icon: const Icon(Icons.sync),
+                  // label: Text(desktop ? "Sync Exams" : ""),
+                  label: Text("Sync Exams"),
+                ),
               ),
             ],
           ),

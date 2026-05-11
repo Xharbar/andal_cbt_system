@@ -114,10 +114,10 @@ class _AdminHomeState extends State<AdminHome>
                 children: [
                   Image.asset(
                     'lib/assets/images/andal_logo_circular.png',
-                    width: 70,
-                    height: 70,
+                    width: 60,
+                    height: 60,
                   ),
-                  SizedBox(width: 10.0),
+                  SizedBox(width: 15.0),
                   Text(
                     'Admin Home',
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -143,7 +143,7 @@ class _AdminHomeState extends State<AdminHome>
                   ),
                 ],
               ),
-              SizedBox(height: 15.0),
+              SizedBox(height: 25.0),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -157,7 +157,7 @@ class _AdminHomeState extends State<AdminHome>
                           header: 'Students',
                           description:
                               'View and manage student profile details, and password.',
-                          image: 'lib/assets/images/students_home.jpeg',
+                          image: 'lib/assets/images/students_home.png',
                           actionDesc: 'Manage Students',
                           onClicked: () => _zoomFadeNavigateTo(
                             context,
@@ -201,7 +201,7 @@ class _AdminHomeState extends State<AdminHome>
                           header: 'Teachers',
                           description:
                               'Effortlessly create and manage teacher profiles right here.',
-                          image: 'lib/assets/images/teachers_home.jpeg',
+                          image: 'lib/assets/images/teachers_home.png',
                           actionDesc: 'Manage Teachers',
                           onClicked: () => _zoomFadeNavigateTo(
                             context,
@@ -223,11 +223,11 @@ class _AdminHomeState extends State<AdminHome>
                           header: 'Scores',
                           description:
                               'Gather scores from ongoing exams and hold onto them for future updates.',
-                          image: 'lib/assets/images/scores_home.jpeg',
+                          image: 'lib/assets/images/scores_home.png',
                           actionDesc: 'View Scores',
                           onClicked: () => _zoomFadeNavigateTo(
                             context,
-                            AdminDashboard(selectedIndex: 3),
+                            AdminDashboard(selectedIndex: 3)
                           ),
                           buttonClicked: () => _zoomFadeNavigateTo(
                             context,
@@ -239,7 +239,7 @@ class _AdminHomeState extends State<AdminHome>
                   ],
                 ),
               ),
-              SizedBox(height: 15.0),
+              SizedBox(height: 25.0),
               Container(
                 alignment: Alignment.bottomCenter,
                 child: Text(

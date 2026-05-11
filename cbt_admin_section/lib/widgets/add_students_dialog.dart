@@ -59,6 +59,8 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                     TextFormField(
                       controller: nameCtrl,
                       decoration: const InputDecoration(labelText: "Full Name"),
+                      validator: (name) =>
+                          name == null ? "Please, enter your name" : null,
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
@@ -68,6 +70,9 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                         labelText: "Reg Number",
                         prefixText: idPrefix,
                       ),
+                      validator: (regNo) => regNo == null
+                          ? "Please, enter your registration number"
+                          : null,
                     ),
                     const SizedBox(height: 10),
                     DropdownButtonFormField<String>(
@@ -85,8 +90,8 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                       onChanged: (newClass) {
                         setState(() => _selectedClass = newClass);
                       },
-                      validator: (uClass) =>
-                          uClass == null ? 'Please select your class' : null,
+                      validator: (stdClass) =>
+                          stdClass == null ? 'Please select your class' : null,
                     ),
                     SizedBox(height: 15),
                     SizedBox(
@@ -95,15 +100,17 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                       child: FilledButton.icon(
                         onPressed: () {
                           String studentID = idPrefix + regCtrl.text;
-                          final newStudent = Student(
-                            DateTime.now().toString(),
-                            nameCtrl.text,
-                            studentID,
-                            _selectedClass!,
-                            generatePasscode(), // Auto-generate on creation
-                            true,
-                          );
-                          Navigator.pop(context, newStudent);
+                          if (_newStudentKey.currentState!.validate()) {
+                            final newStudent = Student(
+                              DateTime.now().toString(),
+                              nameCtrl.text,
+                              studentID,
+                              _selectedClass!,
+                              generatePasscode(), // Auto-generate on creation
+                              true,
+                            );
+                            Navigator.pop(context, newStudent);
+                          }
                         },
                         icon: Icon(Icons.save, size: 22),
                         label: Text("Save", style: TextStyle(fontSize: 16)),

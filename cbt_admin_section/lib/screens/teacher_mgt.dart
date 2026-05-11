@@ -25,6 +25,8 @@ class TeacherManagementPage extends StatefulWidget {
 }
 
 class _TeacherManagementPageState extends State<TeacherManagementPage> {
+  bool showAddPanel = false;
+
   void _addTeacher() async {
     // Simplified add logic
     /*setState(() {
@@ -70,7 +72,9 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                   ? SizedBox(
                       height: 50.0,
                       child: FilledButton.icon(
-                        onPressed: _addTeacher,
+                        onPressed: () => setState(() {
+                          showAddPanel = true;
+                        }),
                         icon: const Icon(Icons.person_add),
                         label: const Text("Add Teacher"),
                       ),
@@ -131,6 +135,38 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       ),
                     ),
                   ),
+                  if (showAddPanel == true) ...[
+                    const SizedBox(
+                      width: 24,
+                    ), // Spacing between main content and side panel
+                    Expanded(
+                      flex: 1, // Takes up 1/3 of the space
+                      child: AddTeacherDialog(
+                        onCancel: () => setState(() => showAddPanel = false),
+                        onSave: (newTeacherData) {
+                          // Handle saving the teacher
+                          setState(() {
+                            teachers.add(
+                              Teacher(
+                                DateTime.now().toString(),
+                                newTeacherData['name'],
+                                newTeacherData['email'],
+                                newTeacherData['subject'],
+                              ),
+                            );
+                            showAddPanel = false; // Close panel after saving
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "${newTeacherData['name']} added successfully!",
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ],
               ),
             )

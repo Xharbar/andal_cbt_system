@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cbt_admin_section/widgets/glass_container.dart';
 
 class NavigationButton extends StatefulWidget {
   const NavigationButton({
@@ -27,11 +28,11 @@ class _NavigationButtonState extends State<NavigationButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onClicked,
-      child: Container(
-        decoration: BoxDecoration(
+      child: GlassContainer(
+        /* decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
           color: Color(0xff1a1a1a).withAlpha(190),
-        ),
+        ), */
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -42,27 +43,27 @@ class _NavigationButtonState extends State<NavigationButton> {
                 widget.header, // .toUpperCase(),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: 30.0,
+                  fontSize: Theme.of(context).textTheme.headlineLarge!.fontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 widget.description,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               Image.asset(
                 widget.image,
                 fit: BoxFit.cover,
-                width: 250,
-                height: 250,
+                /* width: 250,
+                height: 250, */
               ),
               Divider(thickness: 1.0, indent: 8.0, endIndent: 8.0),
               SizedBox(height: 5.0),
               Text(
                 widget.actionDesc,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
