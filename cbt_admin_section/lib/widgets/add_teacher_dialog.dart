@@ -179,7 +179,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? Theme.of(context).colorScheme.primaryContainer
-                            : Colors.white,
+                            : Colors.white.withAlpha(10),
                         border: Border.all(
                           color: isSelected
                               ? Theme.of(context).colorScheme.primary
@@ -213,13 +213,14 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                           Expanded(
                             child: Text(
                               subject,
+                              softWrap: true,
                               style: TextStyle(
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                                 color: isSelected
                                     ? Theme.of(context).colorScheme.primary
-                                    : Colors.black87,
+                                    : Colors.white,
                               ),
                             ),
                           ),
@@ -229,9 +230,9 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                   );
                 },
               ),
-              const SizedBox(height: 80), // Padding for bottom button
+              const SizedBox(height: 30), // Padding for bottom button
               SizedBox(
-                height: 70.0,
+                height: 50.0,
                 width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: () {
@@ -258,7 +259,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
               ),
               SizedBox(height: 10),
               SizedBox(
-                height: 70.0,
+                height: 50.0,
                 width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: () => widget.onCancel,
@@ -276,7 +277,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                   ),
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(
-                      Theme.of(context).colorScheme.primary.withAlpha(60),
+                      Theme.of(context).colorScheme.primary.withAlpha(10),
                     ),
                   ),
                 ),
