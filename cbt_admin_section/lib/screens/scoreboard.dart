@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/screens/admin_home.dart';
+import 'package:cbt_admin_section/data/student_scores.dart';
 
 class ScoreRecord {
   String regNumber;
@@ -35,24 +36,9 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
   String _selectedSubject = "All";
   String _selectedClass = "All";
 
-  final List<ScoreRecord> _allScores = [
-    ScoreRecord("REG001", "John Doe", "SSS 3", "Mathematics", 85, 100),
-    ScoreRecord("REG002", "Jane Smith", "SSS 2", "Mathematics", 92, 100),
-    ScoreRecord("REG001", "John Doe", "JSS 3", "English", 70, 100),
-    ScoreRecord("REG003", "Bob Brown", "JSS 1", "Physics", 45, 100),
-    ScoreRecord(
-      "REG004",
-      "Emmanuel Ayobami Shaba",
-      "SSS 1",
-      "Chemistry",
-      45,
-      100,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final filteredScores = _allScores.where((s) {
+    final filteredScores = allScores.where((s) {
       final bool subjectMatch =
           _selectedSubject == "All" || s.subject == _selectedSubject;
       final bool classMatch =
@@ -105,14 +91,24 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
                 ],
                 onSelected: (val) => setState(() => _selectedClass = val!),
               ),
+              SizedBox(width: 16),
+              SizedBox(
+                height: 50,
+                child: FilledButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.cloud_upload, size: 24),
+                  label: const Text("Sync Scores"),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 24),
           Expanded(
             child: SizedBox.expand(
-              child: Card(
+              child: Container(
+                color: Theme.of(context).cardTheme.color,
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.vertical,
                   child: Scrollbar(
                     child: DataTable(
                       columns: const [
@@ -150,7 +146,7 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          /* const SizedBox(height: 10),
           Align(
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
@@ -158,7 +154,7 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
               icon: const Icon(Icons.cloud_upload),
               label: const Text("Sync Scores to Server"),
             ),
-          ),
+          ), */
         ],
       ),
     );

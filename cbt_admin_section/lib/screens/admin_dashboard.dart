@@ -23,8 +23,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   final List<Widget> _pages = [
     const StudentManagementPage(),
-    const TeacherManagementPage(),
     const ExamSyncPage(),
+    const TeacherManagementPage(),
     const ScoreboardPage(),
   ];
 
@@ -48,19 +48,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
             extended:
                 MediaQuery.of(context).size.width >
                 900, // Collapsible on smaller screens
-            minExtendedWidth: 190,
+            minExtendedWidth: 250,
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.people),
                 label: Text('Students'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.school),
-                label: Text('Teachers'),
-              ),
-              NavigationRailDestination(
                 icon: Icon(Icons.cloud_sync),
                 label: Text('Exam Prep'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.school),
+                label: Text('Teachers'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.bar_chart),

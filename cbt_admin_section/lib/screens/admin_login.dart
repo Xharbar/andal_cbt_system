@@ -43,7 +43,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/assets/images/ready-back-school.jpg"),
+            image: const AssetImage("lib/assets/images/ready-back-school.jpg"),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withAlpha(130),
@@ -74,9 +74,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      Text(
+                      const Text(
                         "Aspire to Inspire...",
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
@@ -132,10 +132,14 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                                   labelText: "Password",
                                   prefixIcon: Icon(Icons.lock),
                                   suffixIcon: IconButton(
-                                    onPressed: () {
+                                    onPressed: () => setState(() {
                                       obscureText = !obscureText;
-                                    },
-                                    icon: Icon(Icons.visibility),
+                                    }),
+                                    icon: Icon(
+                                      obscureText
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
                                   ),
                                 ),
                                 validator: (value) {
@@ -169,8 +173,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
               child: Container(
                 alignment: Alignment.bottomCenter,
                 padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
-                child: Text(
-                  'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 ${DateTime.now().year}. All rights reserved',
+                child: const Text(
+                  'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 2023. All rights reserved',
                   // style: Theme.of(context).textTheme.bodySmall,
                   style: TextStyle(fontSize: 10.0),
                   textAlign: TextAlign.center,

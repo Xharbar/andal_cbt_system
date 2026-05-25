@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
-class NoRegisteredTeacher extends StatelessWidget {
+class NoRegisteredTeacher extends StatefulWidget {
   const NoRegisteredTeacher({super.key, required this.onAddTeacher});
 
   final VoidCallback onAddTeacher;
 
+  @override
+  State<NoRegisteredTeacher> createState() => _NoRegisteredTeacherState();
+}
+
+class _NoRegisteredTeacherState extends State<NoRegisteredTeacher> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -30,7 +35,7 @@ class NoRegisteredTeacher extends StatelessWidget {
           height: 50,
           width: 200,
           child: FilledButton.icon(
-            onPressed: onAddTeacher,
+            onPressed: widget.onAddTeacher,
             label: Text("Add Teacher", style: TextStyle(fontSize: 16)),
             icon: const Icon(Icons.person_add, size: 20),
           ),

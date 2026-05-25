@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:cbt_admin_section/classes_subjects.dart';
+import 'package:cbt_admin_section/data/classes_subjects.dart';
 import '../screens/student_mgt.dart';
 
 class AddStudentsDialog extends StatefulWidget {

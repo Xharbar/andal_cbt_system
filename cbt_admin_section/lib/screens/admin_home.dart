@@ -156,7 +156,7 @@ class _AdminHomeState extends State<AdminHome>
                         child: NavigationButton(
                           header: 'Students',
                           description:
-                              'View and manage student profile details, and password.',
+                              'View and manage student profile information, and password in one place.',
                           image: 'lib/assets/images/students_home.png',
                           actionDesc: 'Manage Students',
                           onClicked: () => _zoomFadeNavigateTo(
@@ -183,11 +183,11 @@ class _AdminHomeState extends State<AdminHome>
                           actionDesc: 'Sync Exams',
                           onClicked: () => _zoomFadeNavigateTo(
                             context,
-                            AdminDashboard(selectedIndex: 2),
+                            AdminDashboard(selectedIndex: 1),
                           ),
                           buttonClicked: () => _zoomFadeNavigateTo(
                             context,
-                            AdminDashboard(selectedIndex: 2),
+                            AdminDashboard(selectedIndex: 1),
                           ),
                         ),
                       ),
@@ -205,11 +205,11 @@ class _AdminHomeState extends State<AdminHome>
                           actionDesc: 'Manage Teachers',
                           onClicked: () => _zoomFadeNavigateTo(
                             context,
-                            AdminDashboard(selectedIndex: 1),
+                            AdminDashboard(selectedIndex: 2),
                           ),
                           buttonClicked: () => _zoomFadeNavigateTo(
                             context,
-                            AdminDashboard(selectedIndex: 1),
+                            AdminDashboard(selectedIndex: 2),
                           ),
                         ),
                       ),
@@ -227,7 +227,7 @@ class _AdminHomeState extends State<AdminHome>
                           actionDesc: 'View Scores',
                           onClicked: () => _zoomFadeNavigateTo(
                             context,
-                            AdminDashboard(selectedIndex: 3)
+                            AdminDashboard(selectedIndex: 3),
                           ),
                           buttonClicked: () => _zoomFadeNavigateTo(
                             context,

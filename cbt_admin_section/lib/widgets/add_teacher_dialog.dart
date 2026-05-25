@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:cbt_admin_section/classes_subjects.dart';
+import 'package:cbt_admin_section/data/classes_subjects.dart';
 
 class AddTeacherDialog extends StatefulWidget {
   const AddTeacherDialog({
@@ -24,7 +24,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
   final confirmPassCtrl = TextEditingController();
   bool obscurePassword = true;
 
-  List<String> allSubjects = juniorSubjects + seniorSubjects;
+  List<String> allSubjects = {...juniorSubjects, ...seniorSubjects}.toList();
   final List<String> _selectedSubject = [];
 
   @override
@@ -32,7 +32,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
-        color: Colors.grey[500],
+        color: Theme.of(context).cardTheme.color,
       ),
       constraints: BoxConstraints(minWidth: 500),
       child: SingleChildScrollView(
@@ -50,10 +50,12 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
               const SizedBox(height: 16),
 
               Container(
-                padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+                padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 10.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.grey[300],
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer.withAlpha(50),
                 ),
                 child: Column(
                   children: [
@@ -161,7 +163,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                 itemCount: allSubjects.length,
                 itemBuilder: (context, index) {
                   final subject = allSubjects[index];
-                  final isSelected = allSubjects.contains(subject);
+                  final isSelected = _selectedSubject.contains(subject);
 
                   return InkWell(
                     onTap: () => setState(() {
@@ -229,7 +231,8 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
               ),
               const SizedBox(height: 80), // Padding for bottom button
               SizedBox(
-                height: 50.0,
+                height: 70.0,
+                width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
@@ -245,12 +248,37 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                         'name': nameCtrl.text,
                         'email': emailCtrl.text,
                         'password': passCtrl.text,
-                        'subject': _selectedSubject,
+                        'subject': _selectedSubject.join(", "),
                       });
                     }
                   },
-                  icon: Icon(Icons.save, size: 28.0),
-                  label: Text("Save"),
+                  icon: Icon(Icons.save, size: 36.0),
+                  label: Text("Save", style: TextStyle(fontSize: 16)),
+                ),
+              ),
+              SizedBox(height: 10),
+              SizedBox(
+                height: 70.0,
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () => widget.onCancel,
+                  icon: Icon(
+                    Icons.cancel,
+                    size: 36.0,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: Text(
+                    "Cancel",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 16,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).colorScheme.primary.withAlpha(60),
+                    ),
+                  ),
                 ),
               ),
             ],

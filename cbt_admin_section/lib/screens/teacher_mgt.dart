@@ -27,25 +27,65 @@ class TeacherManagementPage extends StatefulWidget {
 class _TeacherManagementPageState extends State<TeacherManagementPage> {
   bool showAddPanel = false;
 
-  void _addTeacher() async {
-    // Simplified add logic
-    /*setState(() {
-      teachers.add(Teacher("3", "New Teacher", "new@school.com", "Physics"));
-    });*/
-    final Teacher? returnedTeacher = await showDialog<Teacher>(
+  void _openAddTeacherPanel() {
+    showGeneralDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AddTeacherDialog(
-        onCancel: () {},
-        onSave: (Map<String, dynamic> p1) {},
-      ),
+      barrierDismissible: true,
+      barrierLabel: "Close",
+      // barrierColor: Colors.black.withAlpha(127), // Dims the background
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Padding(
+          padding: EdgeInsetsGeometry.all(20.0),
+          child: Align(
+            alignment: Alignment.centerRight, // Aligns panel to the right
+            child: Material(
+              color: Colors.transparent,
+              elevation: 16,
+              child: SizedBox(
+                width: 550, // Fixed width for the side panel
+                height: double.infinity, // Full height
+                child: AddTeacherDialog(
+                  onCancel: () => Navigator.of(context).pop(),
+                  onSave: (newTeacherData) {
+                    // Handle saving the data
+                    setState(() {
+                      // Add to your list (Assuming you have a _teachers list)
+                      teachers.add(
+                        Teacher(
+                          DateTime.now().toString(),
+                          newTeacherData['name'],
+                          newTeacherData['email'],
+                          newTeacherData['subject'],
+                        ),
+                      );
+                    });
+                    Navigator.of(context).pop(); // Close panel after save
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${newTeacherData['name']} added successfully!",
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      // This makes it slide in from the right edge
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0), // Starts off-screen to the right
+            end: Offset.zero, // Ends at its normal position
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
     );
-
-    if (returnedTeacher != null) {
-      setState(() {
-        // teachers.add(returnedTeacher);
-      });
-    }
   }
 
   @override
@@ -73,7 +113,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       height: 50.0,
                       child: FilledButton.icon(
                         onPressed: () => setState(() {
-                          showAddPanel = true;
+                          _openAddTeacherPanel();
                         }),
                         icon: const Icon(Icons.person_add),
                         label: const Text("Add Teacher"),
@@ -85,14 +125,13 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
           const SizedBox(height: 24),
           if (teachers.isNotEmpty)
             Expanded(
+              flex: 2,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Card(
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: double.infinity,
+                  Expanded(
+                    child: Card(
+                      child: SingleChildScrollView(
                         child: DataTable(
                           columnSpacing: 30.0,
                           columns: const [
@@ -135,38 +174,6 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       ),
                     ),
                   ),
-                  if (showAddPanel == true) ...[
-                    const SizedBox(
-                      width: 24,
-                    ), // Spacing between main content and side panel
-                    Expanded(
-                      flex: 1, // Takes up 1/3 of the space
-                      child: AddTeacherDialog(
-                        onCancel: () => setState(() => showAddPanel = false),
-                        onSave: (newTeacherData) {
-                          // Handle saving the teacher
-                          setState(() {
-                            teachers.add(
-                              Teacher(
-                                DateTime.now().toString(),
-                                newTeacherData['name'],
-                                newTeacherData['email'],
-                                newTeacherData['subject'],
-                              ),
-                            );
-                            showAddPanel = false; // Close panel after saving
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "${newTeacherData['name']} added successfully!",
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
                 ],
               ),
             )
@@ -174,7 +181,9 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
             Expanded(
               child: Card(
                 child: Center(
-                  child: NoRegisteredTeacher(onAddTeacher: _addTeacher),
+                  child: NoRegisteredTeacher(
+                    onAddTeacher: () => _openAddTeacherPanel(),
+                  ),
                 ),
               ),
             ),
@@ -191,5 +200,5 @@ List<Teacher> teachers = [
     "anderson@school.com",
     "Mathematics",
   ),*/
-  // Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
+  Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
 ];
