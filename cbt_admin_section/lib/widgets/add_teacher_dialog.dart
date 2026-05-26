@@ -3,13 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cbt_admin_section/data/classes_subjects.dart';
 
 class AddTeacherDialog extends StatefulWidget {
-  const AddTeacherDialog({
-    super.key,
-    required this.onCancel,
-    required this.onSave,
-  });
+  const AddTeacherDialog({super.key, required this.onSave});
 
-  final VoidCallback onCancel;
   final Function(Map<String, dynamic>) onSave;
 
   @override
@@ -55,7 +50,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                   borderRadius: BorderRadius.circular(10.0),
                   color: Theme.of(
                     context,
-                  ).colorScheme.primaryContainer.withAlpha(50),
+                  ).colorScheme.primaryContainer.withAlpha(20),
                 ),
                 child: Column(
                   children: [
@@ -213,7 +208,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                           Expanded(
                             child: Text(
                               subject,
-                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontWeight: isSelected
                                     ? FontWeight.bold
@@ -262,7 +257,8 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                 height: 50.0,
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: () => widget.onCancel,
+                  onPressed: () =>
+                      Navigator.of(context, rootNavigator: true).pop(),
                   icon: Icon(
                     Icons.cancel,
                     size: 36.0,

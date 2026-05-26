@@ -14,7 +14,6 @@ void main() async {
 
   WindowOptions windowOptions = const WindowOptions(
     center: true,
-    backgroundColor: Colors.transparent,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.normal,
     title: "Andal CBT Admin Portal",

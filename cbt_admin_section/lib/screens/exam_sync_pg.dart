@@ -71,82 +71,79 @@ class _ExamSyncPageState extends State<ExamSyncPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => goHome(context),
-                  icon: Icon(Icons.home_outlined),
-                  iconSize: 35.0,
-                ),
-                SizedBox(width: 10.0),
-                Text(
-                  "Exam Preparation & Sync",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const Spacer(),
-                SizedBox(
-                  height: 50,
-                  child: FilledButton.icon(
-                    onPressed: () =>
-                        _syncExam(0), // For demo, sync the first exam
-                    icon: const Icon(Icons.sync),
-                    // label: Text(desktop ? "Sync Exams" : ""),
-                    label: Text("Sync Exams"),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Synchronize & download exams from the cloud server to make them available for students on the local network.",
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _exams.length,
-                itemBuilder: (context, index) {
-                  final exam = _exams[index];
-                  return Card(
-                    color: Theme.of(context).cardColor,
-                    child: ListTile(
-                      leading: Icon(
-                        exam.isSyncedLocal
-                            ? Icons.check_circle
-                            : Icons.cloud_download,
-                        color: exam.isSyncedLocal ? Colors.green : Colors.grey,
-                        size: 30,
-                      ),
-                      title: Text(
-                        exam.subject,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        "Questions: ${exam.questionCount} • Last Updated: ${DateFormat('MMM dd, HH:mm').format(exam.lastUpdated)}",
-                      ),
-                      trailing: exam.isSyncedLocal
-                          ? OutlinedButton(
-                              onPressed: () => _syncExam(index),
-                              child: const Text("Re-Sync"),
-                            )
-                          : FilledButton(
-                              onPressed: () => _syncExam(index),
-                              child: const Text("Download"),
-                            ),
-                    ),
-                  );
-                },
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => goHome(context),
+                icon: Icon(Icons.home_outlined),
+                iconSize: 35.0,
               ),
+              SizedBox(width: 10.0),
+              Text(
+                "Exam Preparation & Sync",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const Spacer(),
+              SizedBox(
+                height: 50,
+                child: FilledButton.icon(
+                  onPressed: () =>
+                      _syncExam(0), // For demo, sync the first exam
+                  icon: const Icon(Icons.sync),
+                  // label: Text(desktop ? "Sync Exams" : ""),
+                  label: Text("Sync Exams"),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "Synchronize & download exams from the cloud server to make them available for students on the local network.",
+            style: TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _exams.length,
+              itemBuilder: (context, index) {
+                final exam = _exams[index];
+                return Card(
+                  color: Theme.of(context).cardColor,
+                  child: ListTile(
+                    leading: Icon(
+                      exam.isSyncedLocal
+                          ? Icons.check_circle
+                          : Icons.cloud_download,
+                      color: exam.isSyncedLocal ? Colors.green : Colors.grey,
+                      size: 30,
+                    ),
+                    title: Text(
+                      exam.subject,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      "Questions: ${exam.questionCount} • Last Updated: ${DateFormat('MMM dd, HH:mm').format(exam.lastUpdated)}",
+                    ),
+                    trailing: exam.isSyncedLocal
+                        ? OutlinedButton(
+                            onPressed: () => _syncExam(index),
+                            child: const Text("Re-Sync"),
+                          )
+                        : FilledButton(
+                            onPressed: () => _syncExam(index),
+                            child: const Text("Download"),
+                          ),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

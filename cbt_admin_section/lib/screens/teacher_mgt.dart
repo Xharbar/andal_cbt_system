@@ -30,7 +30,6 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
   void _openAddTeacherPanel() {
     showGeneralDialog(
       context: context,
-      barrierDismissible: true,
       barrierLabel: "Close",
       // barrierColor: Colors.black.withAlpha(127), // Dims the background
       transitionDuration: const Duration(milliseconds: 300),
@@ -68,7 +67,6 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       ),
                     );
                   },
-                  onCancel: () => Navigator.of(context).pop(),
                 ),
               ),
             ),
@@ -90,115 +88,106 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => goHome(context),
-                  icon: Icon(Icons.home_outlined),
-                  iconSize: 35.0,
-                ),
-                SizedBox(width: 10.0),
-                Text(
-                  "Teacher Management",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                Spacer(),
-                ?teachers.isNotEmpty
-                    ? SizedBox(
-                        height: 50.0,
-                        child: FilledButton.icon(
-                          onPressed: () => setState(() {
-                            _openAddTeacherPanel();
-                          }),
-                          icon: const Icon(Icons.person_add),
-                          label: const Text("Add Teacher"),
-                        ),
-                      )
-                    : null,
-              ],
-            ),
-            const SizedBox(height: 24),
-            if (teachers.isNotEmpty)
-              Expanded(
-                flex: 2,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: Card(
-                        child: SingleChildScrollView(
-                          child: DataTable(
-                            columnSpacing: 30.0,
-                            columns: const [
-                              DataColumn(
-                                label: SizedBox(
-                                  width: 170,
-                                  child: Text("Name"),
-                                ),
-                              ),
-                              DataColumn(
-                                label: SizedBox(
-                                  width: 200,
-                                  child: Text("Email"),
-                                ),
-                              ),
-                              DataColumn(label: Text("Subject Assigned")),
-                              DataColumn(label: Text("Actions")),
-                            ],
-                            rows: teachers
-                                .map(
-                                  (t) => DataRow(
-                                    cells: [
-                                      DataCell(Text(t.fullName)),
-                                      DataCell(Text(t.email)),
-                                      DataCell(Text(t.subjectAssigned)),
-                                      DataCell(
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.edit),
-                                              onPressed: () {},
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => goHome(context),
+                icon: Icon(Icons.home_outlined),
+                iconSize: 35.0,
+              ),
+              SizedBox(width: 10.0),
+              Text(
+                "Teacher Management",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              Spacer(),
+              ?teachers.isNotEmpty
+                  ? SizedBox(
+                      height: 50.0,
+                      child: FilledButton.icon(
+                        onPressed: () => setState(() {
+                          _openAddTeacherPanel();
+                        }),
+                        icon: const Icon(Icons.person_add),
+                        label: const Text("Add Teacher"),
+                      ),
+                    )
+                  : null,
+            ],
+          ),
+          const SizedBox(height: 24),
+          if (teachers.isNotEmpty)
+            Expanded(
+              flex: 2,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Card(
+                      child: SingleChildScrollView(
+                        child: DataTable(
+                          columnSpacing: 30.0,
+                          columns: const [
+                            DataColumn(
+                              label: SizedBox(width: 170, child: Text("Name")),
+                            ),
+                            DataColumn(
+                              label: SizedBox(width: 200, child: Text("Email")),
+                            ),
+                            DataColumn(label: Text("Subject Assigned")),
+                            DataColumn(label: Text("Actions")),
+                          ],
+                          rows: teachers
+                              .map(
+                                (t) => DataRow(
+                                  cells: [
+                                    DataCell(Text(t.fullName)),
+                                    DataCell(Text(t.email)),
+                                    DataCell(Text(t.subjectAssigned)),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit),
+                                            onPressed: () {},
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
                                             ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed: () {},
-                                            ),
-                                          ],
-                                        ),
+                                            onPressed: () {},
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                                .toList(),
-                          ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              )
-            else
-              Expanded(
-                child: Card(
-                  child: Center(
-                    child: NoRegisteredTeacher(
-                      onAddTeacher: () => _openAddTeacherPanel(),
-                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Expanded(
+              child: Card(
+                child: Center(
+                  child: NoRegisteredTeacher(
+                    onAddTeacher: () => _openAddTeacherPanel(),
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
