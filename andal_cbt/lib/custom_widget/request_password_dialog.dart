@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RequestPasswordDialog extends StatefulWidget {
   const RequestPasswordDialog({
@@ -78,9 +77,7 @@ class _RequestPasswordDialog extends State<RequestPasswordDialog> {
                   });
                 },
                 // icon: widget.suffixIcon,
-                icon: FaIcon(
-                  hidden ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                ),
+                icon: Icon(hidden ? Icons.visibility : Icons.visibility_off),
                 iconSize: 22.0,
               ),
             ),

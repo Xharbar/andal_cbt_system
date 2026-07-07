@@ -173,10 +173,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
               child: Container(
                 alignment: Alignment.bottomCenter,
                 padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
-                child: const Text(
+                child: Text(
                   'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 2023. All rights reserved',
-                  // style: Theme.of(context).textTheme.bodySmall,
-                  style: TextStyle(fontSize: 10.0),
+                  style: TextTheme.of(context).bodySmall,
                   textAlign: TextAlign.center,
                 ),
               ),

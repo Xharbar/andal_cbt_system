@@ -126,10 +126,21 @@ class _AdminHomeState extends State<AdminHome>
                   SizedBox(
                     height: 50,
                     child: FilledButton.icon(
-                      onPressed: () => _logout(),
-                      icon: Icon(Icons.logout),
+                      onPressed: _loggingOut ? null : () => _logout(),
+                      icon: _loggingOut
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.0,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                          : Icon(Icons.logout),
                       label: Text(
-                        'Logout',
+                        _loggingOut ? 'Logging out...' : 'Logout',
                         style: TextStyle(color: Colors.white, fontSize: 16.0),
                       ),
                       style: ButtonStyle(
@@ -141,6 +152,7 @@ class _AdminHomeState extends State<AdminHome>
                       ),
                     ),
                   ),
+                  // ...existing code...
                 ],
               ),
               SizedBox(height: 25.0),
@@ -244,8 +256,7 @@ class _AdminHomeState extends State<AdminHome>
                 alignment: Alignment.bottomCenter,
                 child: Text(
                   'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 ${DateTime.now().year}. All rights reserved',
-                  // style: Theme.of(context).textTheme.bodySmall,
-                  style: TextStyle(fontSize: 10.0),
+                  style: TextTheme.of(context).bodySmall,
                   textAlign: TextAlign.center,
                 ),
               ),
