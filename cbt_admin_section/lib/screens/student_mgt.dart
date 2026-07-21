@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:cbt_admin_section/services/student_postgres_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
@@ -36,30 +38,122 @@ class StudentManagementPage extends StatefulWidget {
 
 class _StudentManagementPageState extends State<StudentManagementPage> {
   List<String> subjects = [];
+  List<Student> _students = [];
   String _selectedClassFilter = "All";
+  bool _isLoading = true;
+  final postgresService = PostgresService();
+
+  Timer? _passcodeTimer;
+  int _countdown = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStudentsFromDb();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _passcodeTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _passcodeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (_countdown > 1) {
+            _countdown--;
+          } else {
+            // Timer hit 0! Reset timer and regenerate ALL passcodes
+            _countdown = 60;
+            for (var student in _students) {
+              student.currentPasscode = generatePasscode();
+              _onTimerExpired(student);
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // Call this exact method whenever your 60-second timer reaches 0
+  void _onTimerExpired(Student student) async {
+    // 1. Generate the new passcode
+    String newCode = generatePasscode();
+
+    try {
+      // 2. Update it in the PostgreSQL Database
+      await postgresService.updateStudentPasscode(student.regNumber, newCode);
+
+      // 3. Update the UI locally
+      setState(() {
+        student.currentPasscode = newCode;
+      });
+
+      // (Optional) Restart your 60-second timer here if it's meant to loop continuously
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to update passcode: $e")),
+        );
+      }
+    }
+  }
+
+  Future<void> _loadStudentsFromDb() async {
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+    try {
+      final students = await postgresService.getStudents();
+      if (!mounted) return;
+      setState(() {
+        _students = students;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      // Show error if DB is down
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("DB Error: $e")));
+    }
+  }
 
   void _addStudent() async {
-    final Student? returnedStudent = await showDialog<Student>(
+    final Student? newStudent = await showDialog<Student>(
       context: context,
       barrierDismissible: false,
       builder: (context) => const AddStudentsDialog(),
     );
 
-    if (returnedStudent != null) {
-      setState(() {
-        students.add(returnedStudent);
-      });
+    if (newStudent != null) {
+      if (!mounted) return;
+      setState(() => _isLoading = true);
+      await postgresService.insertStudent(newStudent);
+      if (!mounted) return;
+      await _loadStudentsFromDb(); // Refresh list
     }
+  }
+
+  void _deleteStudent(String id) async {
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+    await postgresService.deleteStudent(id);
+    if (!mounted) return;
+    await _loadStudentsFromDb(); // Refresh list
   }
 
   void _regeneratePasscode(int index) {
     setState(() {
-      students[index].currentPasscode = generatePasscode();
+      _students[index].currentPasscode = generatePasscode();
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "New Passcode for ${students[index].fullName}: ${students[index].currentPasscode}",
+          "New Passcode for ${_students[index].fullName}: ${_students[index].currentPasscode}",
         ),
       ),
     );
@@ -68,8 +162,8 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
   @override
   Widget build(BuildContext context) {
     final filteredStudents = _selectedClassFilter == "All"
-        ? students
-        : students.where((s) => s.stdClass == _selectedClassFilter).toList();
+        ? _students
+        : _students.where((s) => s.stdClass == _selectedClassFilter).toList();
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -92,7 +186,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
               ),
               Spacer(),
               Row(
-                children: students.isEmpty
+                children: _students.isEmpty
                     ? []
                     : [
                         DropdownMenu<String>(
@@ -113,7 +207,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                           onSelected: (val) =>
                               setState(() => _selectedClassFilter = val!),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 15),
                         SizedBox(
                           height: 50,
                           child: FilledButton.icon(
@@ -129,7 +223,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
           const SizedBox(height: 24),
           Expanded(
             child: Card(
-              child: students.isEmpty
+              child: _students.isEmpty
                   ? Container(
                       constraints: BoxConstraints.expand(),
                       child: NoRegisteredStudent(onAddStudent: _addStudent),
@@ -171,12 +265,38 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 20),
                               IconButton(
-                                icon: const Icon(Icons.refresh),
+                                icon: const Icon(Icons.edit),
                                 onPressed: () => _regeneratePasscode(index),
                                 tooltip: "Regenerate Passcode",
                               ),
+                              SizedBox(width: 10),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      value: _countdown / 60.0,
+                                      strokeWidth: 3.5,
+                                      backgroundColor: Colors.white.withAlpha(
+                                        20,
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    "$_countdown",
+                                    style: TextStyle(
+                                      fontSize: 8.5,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 10),
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
@@ -184,9 +304,10 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    students.removeWhere(
+                                    _students.removeWhere(
                                       (item) => item.id == s.id,
                                     );
+                                    _deleteStudent(s.id);
                                   });
                                 },
                                 tooltip: "Delete Student",
@@ -211,7 +332,6 @@ String generatePasscode() {
 }
 
 // 2. UPDATE MOCK DATA
-final List<Student> students = [
-  // Student("1", "John Doe", "REG/2024/0001", "JSS 1", "123456", true),
-  // Student("2", "Jane Smith", "REG/2024/0002", "SSS 2", "654321", true),
-];
+
+// Student("1", "John Doe", "REG/2024/0001", "JSS 1", "123456", true),
+// Student("2", "Jane Smith", "REG/2024/0002", "SSS 2", "654321", true),

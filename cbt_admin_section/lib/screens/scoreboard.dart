@@ -100,6 +100,13 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
                   label: const Text("Sync Scores"),
                 ),
               ),
+              const SizedBox(width: 15),
+              IconButton.filled(
+                onPressed: () {},
+                icon: Icon(Icons.download),
+                iconSize: 35,
+                tooltip: 'Download Scores',
+              ),
             ],
           ),
           const SizedBox(height: 24),

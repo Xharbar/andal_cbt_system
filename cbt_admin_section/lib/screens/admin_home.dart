@@ -212,7 +212,7 @@ class _AdminHomeState extends State<AdminHome>
                         child: NavigationButton(
                           header: 'Teachers',
                           description:
-                              'Effortlessly create and manage teacher profiles right here.',
+                              'Effortlessly create, edit and manage teacher profile details right here.',
                           image: 'lib/assets/images/teachers_home.png',
                           actionDesc: 'Manage Teachers',
                           onClicked: () => _zoomFadeNavigateTo(

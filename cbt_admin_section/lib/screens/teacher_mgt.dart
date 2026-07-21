@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cbt_admin_section/services/teacher_postgres_service.dart';
 
 import 'package:cbt_admin_section/widgets/no_registered_teacher.dart';
 import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
@@ -9,8 +10,15 @@ class Teacher {
   String fullName;
   String email;
   String subjectAssigned;
+  String password;
 
-  Teacher(this.id, this.fullName, this.email, this.subjectAssigned);
+  Teacher(
+    this.id,
+    this.fullName,
+    this.email,
+    this.subjectAssigned,
+    this.password,
+  );
 }
 
 // ==========================================
@@ -26,6 +34,34 @@ class TeacherManagementPage extends StatefulWidget {
 
 class _TeacherManagementPageState extends State<TeacherManagementPage> {
   bool showAddPanel = false;
+  bool _isLoading = false;
+  final postgresService = PostgresService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTeachersFromDb();
+  }
+
+  Future<void> _loadTeachersFromDb() async {
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+    try {
+      final teachers = await postgresService.getTeachers();
+      if (!mounted) return;
+      setState(() {
+        _teachers = teachers;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      // Show error if DB is down
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("DB Error: $e")));
+    }
+  }
 
   void _openAddTeacherPanel() {
     showGeneralDialog(
@@ -45,16 +81,17 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                 width: 400, // Fixed width for the side panel
                 height: double.infinity, // Full height
                 child: AddTeacherDialog(
-                  onSave: (newTeacherData) {
+                  onSave: (newTeacherData) async {
                     // Handle saving the data
                     setState(() {
                       // Add to your list (Assuming you have a _teachers list)
-                      teachers.add(
+                      _teachers.add(
                         Teacher(
                           DateTime.now().toString(),
                           newTeacherData['name'],
                           newTeacherData['email'],
                           newTeacherData['subject'],
+                          newTeacherData['password'],
                         ),
                       );
                     });
@@ -66,6 +103,22 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                         ),
                       ),
                     );
+
+                    if (!mounted) return;
+                    setState(() => _isLoading = true);
+                    await postgresService.insertTeacher(
+                      context,
+                      Teacher(
+                        DateTime.now().toString(),
+                        newTeacherData['name'],
+                        newTeacherData['email'],
+                        newTeacherData['subject'],
+                        newTeacherData['password'],
+                      ),
+                    );
+
+                    if (!mounted) return;
+                    await _loadTeachersFromDb(); // Refresh the list after adding
                   },
                 ),
               ),
@@ -84,6 +137,14 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
         );
       },
     );
+  }
+
+  void _deleteTeacher(String id) async {
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+    await postgresService.deleteTeacher(id);
+    if (!mounted) return;
+    await _loadTeachersFromDb(); // Refresh list
   }
 
   @override
@@ -106,7 +167,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               Spacer(),
-              ?teachers.isNotEmpty
+              ?_teachers.isNotEmpty
                   ? SizedBox(
                       height: 50.0,
                       child: FilledButton.icon(
@@ -118,10 +179,17 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       ),
                     )
                   : null,
+              SizedBox(width: 10.0),
+              IconButton.filled(
+                onPressed: () {},
+                icon: Icon(Icons.cloud_sync),
+                iconSize: 35.0,
+                tooltip: 'Sync with server',
+              ),
             ],
           ),
           const SizedBox(height: 24),
-          if (teachers.isNotEmpty)
+          if (_teachers.isNotEmpty)
             Expanded(
               flex: 2,
               child: Row(
@@ -142,7 +210,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                             DataColumn(label: Text("Subject Assigned")),
                             DataColumn(label: Text("Actions")),
                           ],
-                          rows: teachers
+                          rows: _teachers
                               .map(
                                 (t) => DataRow(
                                   cells: [
@@ -161,7 +229,15 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                                               Icons.delete,
                                               color: Colors.red,
                                             ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              setState(() {
+                                                _teachers.removeWhere(
+                                                  (item) =>
+                                                      item.email == t.email,
+                                                );
+                                                _deleteTeacher(t.email);
+                                              });
+                                            },
                                           ),
                                         ],
                                       ),
@@ -193,12 +269,4 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
   }
 }
 
-List<Teacher> teachers = [
-  /*Teacher(
-    "1",
-    "Mr. Emmanuel Ayobami Shaba Digital Technology",
-    "anderson@school.com",
-    "Mathematics",
-  ),*/
-  Teacher("2", "Mrs. Roberts", "roberts@school.com", "English"),
-];
+List<Teacher> _teachers = [];

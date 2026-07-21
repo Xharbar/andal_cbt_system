@@ -9,7 +9,7 @@ import 'package:quiz_creator/themes/dark_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setWindowTitle("Andal CBT Teacher Portal");
-  setWindowMinSize(const Size(800, 600));
+  // setWindowMinSize(const Size(800, 600));
 
   await Supabase.initialize(
     url: "https://ggglwxifkkvoqmtddbxh.supabase.co",
