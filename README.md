@@ -109,7 +109,7 @@ To ensure academic integrity, the system implements several layers of security:
 2. Flutter Apps Setup
 
 1.  Clone the repository:
-    git clone https://github.com/yourusername/andal-cbt-system.git
+    git clone https://github.com/Xharbar/andal_cbt_system.git
 2.  Navigate into any of the app directories (Admin, Teacher, or Student):
     cd andal_student_app
     flutter pub get
