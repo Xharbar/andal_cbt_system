@@ -1,14 +1,9 @@
-import 'dart:async';
-// import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:andal_cbt/screens/exam_screen.dart';
 import 'package:andal_cbt/app_data/classes_n_subjects.dart';
 import 'package:andal_cbt/custom_widget/request_password_dialog.dart';
-// import 'package:postgres/postgres.dart';
-// import 'package:http/http.dart' as http;
 import 'dart:io';
-
-const String serverUrl = "http://169.254.22.17:5432";
+import 'package:andal_cbt/app_data/student_db_service.dart';
 
 // ==========================================
 // 3. Login Screen
@@ -32,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passKey = GlobalKey<FormState>();
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  bool _isLoading = false;
+  final dbService = StudentDbService();
 
   void _requestPassword() {
     if (_formKey.currentState!.validate()) {
@@ -68,73 +65,81 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _handleLogin() {
-    // Simulate login delay
+  void _handleLogin() async {
     if (_passKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Logging in...')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 24,
+                // height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3.0,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Logging in...'),
+            ],
+          ),
+        ),
+      );
 
-      Future.delayed(const Duration(seconds: 1), () {
+      setState(() => _isLoading = true);
+
+      try {
+        final studentData = await dbService.loginStudent(
+          _userController.text.trim(),
+          _passController.text.trim(),
+        );
+
+        if (studentData != null) {
+          final studentName = studentData['fullName'];
+
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("Welcome $studentName!")));
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ExamScreen(
+                  studentId: "$prefixId${_userController.text.trim()}",
+                  subject: "$_selectedSubject",
+                  studentClass: "$_selectedClass",
+                ),
+              ),
+            );
+          }
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Invalid Registration Number or Passcode. Note: Passcodes expire every 60 seconds.",
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExamScreen(
-                studentId: "$prefixId${_userController.text.trim()}",
-                subject: "$_selectedSubject",
-                studentClass: "$_selectedClass",
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Connection Error: Make sure you are on the school Wi-Fi.",
               ),
             ),
           );
         }
-      });
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
     }
   }
-
-  /*void _loginFailed({required String text}) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
-  }*/
-
-  /*Future<void> _loginStudent({
-    required String studentId,
-    required String studentClass,
-    required String passCode,
-  }) async {
-    // 1. Establish Connection
-    final conn = await Connection.open(
-      Endpoint(
-        // host: '169.254.22.17',
-        host: '192.168.43.107',
-        database: 'andal_cbt_db',
-        username: 'admin',
-        password: 'admin',
-      ),
-      settings: ConnectionSettings(sslMode: SslMode.disable),
-    );
-
-    try {
-      final result = await conn.execute(
-        Sql.named(
-          'SELECT full_name FROM ${studentClass}_cbt_login WHERE student_id = @id AND passcode = @passcode',
-        ),
-        parameters: {'id': studentId, 'passcode': passCode},
-        // timeout: Duration(seconds: 5),
-      );
-      if (result.isNotEmpty) {
-        CircularProgressIndicator();
-        _handleLogin();
-      } else {
-        _loginFailed(
-          text: 'Login Failed. Ensure that your details are correct.',
-        );
-      }
-    } catch (e) {
-      _loginFailed(text: 'Connection Error: Can\'t connect to server');
-    } finally {
-      await conn.close();
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     "Welcome \u{1f642}",
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.headlineLarge,
+                                    ).textTheme.displaySmall,
                                     textAlign: TextAlign.center,
                                   ),
                                   Text(
@@ -238,6 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextFormField(
                                 autofocus: true,
                                 controller: _userController,
+                                maxLength: 4,
                                 decoration: InputDecoration(
                                   labelText: "Student ID",
                                   prefixIcon: Icon(Icons.person_outline),
@@ -349,7 +355,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 ${DateTime.now().year}. All rights reserved',
                       // style: Theme.of(context).textTheme.bodySmall,
-                      style: TextStyle(fontSize: 10.0),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                   ),

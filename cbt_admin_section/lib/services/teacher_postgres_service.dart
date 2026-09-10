@@ -109,7 +109,7 @@ class PostgresService {
           row[0] as String, // id
           row[1] as String, // full_name
           row[2] as String, // email
-          row[3] as String, // subject assigned
+          row[3] as String, // subject_assigned
           row[4] as String, // password
         ),
       );

@@ -531,6 +531,7 @@ class _ExamScreenState extends State<ExamScreen> with WindowListener {
                                         children: [
                                           Text(
                                             question.text,
+                                            textAlign: TextAlign.left,
                                             style: const TextStyle(
                                               fontSize: 22,
                                               fontWeight: FontWeight.w600,
