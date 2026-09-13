@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:cbt_admin_section/widgets/loader.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/screens/admin_home.dart';
@@ -19,13 +22,60 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   final _passController = TextEditingController();
   bool obscureText = true;
 
-  void _login() {
+  void showBlurredLoader(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withAlpha(50),
+      builder: (BuildContext context) {
+        return PopScope(
+          canPop: false,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+            child: const Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Loader(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _login() async {
     // Mock Auth
-    if (_formKey.currentState!.validate()) {
+    /* if (_formKey.currentState!.validate()) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const AdminHome()),
       );
+    } */
+    if (_formKey.currentState!.validate()) {
+      showBlurredLoader(context);
+
+      try {
+        await Future.delayed(const Duration(seconds: 3));
+
+        /* if (mounted) {
+          Navigator.pop(context);
+        } */
+        if (mounted) {
+          Navigator.pop(context);
+        }
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => AdminHome()),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          Navigator.pop(context);
+          SnackBar(content: Text('An Error Occured: $e'));
+        }
+      }
     }
   }
 
@@ -43,7 +93,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: const AssetImage("lib/assets/images/ready-back-school.jpg"),
+            image: const AssetImage("lib/assets/images/login_background.jpg"),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withAlpha(130),
@@ -174,7 +224,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 alignment: Alignment.bottomCenter,
                 padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
                 child: Text(
-                  'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 2023. All rights reserved',
+                  'developed by the ICT Department, Andal Science Academy.\nCopyright \u00A9 ${DateTime.now().year}. All rights reserved',
                   style: TextTheme.of(context).bodySmall,
                   textAlign: TextAlign.center,
                 ),

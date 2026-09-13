@@ -15,7 +15,7 @@ class StudentDbService {
 
     _connection = await Connection.open(
       Endpoint(
-        host: '192.168.250.26',
+        host: 'localhost',
         port: 5432,
         database: 'cbt_admin_db',
         username: 'postgres', // Your Postgres username

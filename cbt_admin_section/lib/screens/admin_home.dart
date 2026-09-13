@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cbt_admin_section/widgets/navigation_button.dart';
 import 'package:cbt_admin_section/screens/admin_dashboard.dart';
 import 'package:cbt_admin_section/widgets/fly_in_animation.dart';
+import 'package:cbt_admin_section/widgets/loader.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({super.key});
@@ -63,6 +64,11 @@ class _AdminHomeState extends State<AdminHome>
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Logging out...')));
+    /* showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Loader(),
+    ); */
 
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
@@ -96,12 +102,10 @@ class _AdminHomeState extends State<AdminHome>
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-              'lib/assets/images/desk-with-books-stationery-clocks.jpg',
-            ),
+            image: AssetImage('lib/assets/images/home_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withAlpha(70),
+              Colors.black.withAlpha(170),
               BlendMode.darken,
             ),
           ),
