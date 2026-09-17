@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
 import 'package:cbt_admin_section/widgets/no_registered_student.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
-import 'package:cbt_admin_section/widgets/loader.dart';
 
 class Student {
   String id;
