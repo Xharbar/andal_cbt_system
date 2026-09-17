@@ -31,7 +31,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         return PopScope(
           canPop: false,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
             child: const Dialog(
               backgroundColor: Colors.transparent,
               elevation: 0,

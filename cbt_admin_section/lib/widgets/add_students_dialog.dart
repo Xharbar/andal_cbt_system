@@ -24,7 +24,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
       // title: const Text("Register Student"),
       constraints: BoxConstraints(maxWidth: 400, maxHeight: 700),
       content: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

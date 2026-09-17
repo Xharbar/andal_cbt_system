@@ -36,6 +36,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
   bool showAddPanel = false;
   bool _isLoading = false;
   final postgresService = PostgresService();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     setState(() => _isLoading = true);
     try {
       final teachers = await postgresService.getTeachers();
+      await Future.delayed(Duration(seconds: 1));
       if (!mounted) return;
       setState(() {
         _teachers = teachers;
@@ -149,12 +151,24 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final filteredTeachers = _searchQuery.isEmpty
+        ? _teachers
+        : _teachers
+              .where(
+                (teacher) => teacher.fullName.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ),
+              )
+              .toList();
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
                 onPressed: () => goHome(context),
@@ -167,6 +181,26 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               Spacer(),
+              ?_teachers.isNotEmpty
+                  ? Expanded(
+                      child: TextField(
+                        onChanged: (value) =>
+                            setState(() => _searchQuery = value),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          constraints: BoxConstraints(maxWidth: 200),
+                        ),
+                      ),
+                    )
+                  : null,
+              SizedBox(width: 10.0),
               ?_teachers.isNotEmpty
                   ? SizedBox(
                       height: 50.0,
@@ -189,80 +223,102 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
             ],
           ),
           const SizedBox(height: 24),
-          if (_teachers.isNotEmpty)
-            Expanded(
-              flex: 2,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: Card(
-                      child: SingleChildScrollView(
-                        child: DataTable(
-                          columnSpacing: 30.0,
-                          columns: const [
-                            DataColumn(
-                              label: SizedBox(width: 170, child: Text("Name")),
-                            ),
-                            DataColumn(
-                              label: SizedBox(width: 200, child: Text("Email")),
-                            ),
-                            DataColumn(label: Text("Subject Assigned")),
-                            DataColumn(label: Text("Actions")),
-                          ],
-                          rows: _teachers
-                              .map(
-                                (t) => DataRow(
-                                  cells: [
-                                    DataCell(Text(t.fullName)),
-                                    DataCell(Text(t.email)),
-                                    DataCell(Text(t.subjectAssigned)),
-                                    DataCell(
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit),
-                                            onPressed: () {},
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _teachers.removeWhere(
-                                                  (item) =>
-                                                      item.email == t.email,
-                                                );
-                                                _deleteTeacher(t.email);
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+          Expanded(
+            flex: 2,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Card(
+                    child: _isLoading
+                        ? Container(
+                            constraints: BoxConstraints.expand(),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  strokeWidth: 10.0,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Theme.of(context).primaryColor,
+                                  ),
+                                  backgroundColor: Colors.grey[300],
+                                  strokeCap: StrokeCap.butt,
                                 ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else
-            Expanded(
-              child: Card(
-                child: Center(
-                  child: NoRegisteredTeacher(
-                    onAddTeacher: () => _openAddTeacherPanel(),
+                                SizedBox(height: 10.0),
+                                Text('Fetching data...'),
+                              ],
+                            ),
+                          )
+                        : _teachers.isNotEmpty
+                        ? SingleChildScrollView(
+                            child: DataTable(
+                              columnSpacing: 30.0,
+                              columns: const [
+                                DataColumn(
+                                  label: SizedBox(
+                                    width: 170,
+                                    child: Text("Name"),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: SizedBox(
+                                    width: 200,
+                                    child: Text("Email"),
+                                  ),
+                                ),
+                                DataColumn(label: Text("Subject Assigned")),
+                                DataColumn(label: Text("Actions")),
+                              ],
+                              rows: filteredTeachers
+                                  .map(
+                                    (t) => DataRow(
+                                      cells: [
+                                        DataCell(Text(t.fullName)),
+                                        DataCell(Text(t.email)),
+                                        DataCell(Text(t.subjectAssigned)),
+                                        DataCell(
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.edit),
+                                                onPressed: () {},
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _teachers.removeWhere(
+                                                      (item) =>
+                                                          item.email == t.email,
+                                                    );
+                                                    _deleteTeacher(t.email);
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          )
+                        : Container(
+                            constraints: BoxConstraints.expand(),
+                            child: NoRegisteredTeacher(
+                              onAddTeacher: () => _openAddTeacherPanel(),
+                            ),
+                          ),
                   ),
                 ),
-              ),
+              ],
             ),
+          ),
         ],
       ),
     );

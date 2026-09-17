@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cbt_admin_section/screens/admin_login.dart';
 import 'package:flutter/material.dart';
 
@@ -59,18 +61,36 @@ class _AdminHomeState extends State<AdminHome>
     );
   }
 
-  void _logout() {
+  void showBlurredLoader(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withAlpha(50),
+      builder: (BuildContext context) {
+        return PopScope(
+          canPop: false,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+            child: const Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Loader(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _logout() async {
     setState(() => _loggingOut = true);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Logging out...')));
-    /* showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Loader(),
-    ); */
 
-    Future.delayed(const Duration(seconds: 1), () {
+    showBlurredLoader(context);
+
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() => _loggingOut = false);
         _zoomFadeNavigateTo(context, AdminLoginScreen());

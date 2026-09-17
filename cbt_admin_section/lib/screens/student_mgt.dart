@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
 import 'package:cbt_admin_section/widgets/no_registered_student.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
+import 'package:cbt_admin_section/widgets/loader.dart';
 
 class Student {
   String id;
@@ -107,6 +108,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
     setState(() => _isLoading = true);
     try {
       final students = await postgresService.getStudents();
+      await Future.delayed(Duration(seconds: 1));
       if (!mounted) return;
       setState(() {
         _students = students;
@@ -223,7 +225,27 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
           const SizedBox(height: 24),
           Expanded(
             child: Card(
-              child: _students.isEmpty
+              child: _isLoading
+                  ? Container(
+                      constraints: BoxConstraints.expand(),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            strokeWidth: 10.0,
+                            valueColor: AlwaysStoppedAnimation(
+                              Theme.of(context).primaryColor,
+                            ),
+                            backgroundColor: Colors.grey[300],
+                            strokeCap: StrokeCap.butt,
+                          ),
+                          SizedBox(height: 10.0),
+                          Text('Fetching data...'),
+                        ],
+                      ),
+                    )
+                  : _students.isEmpty
                   ? Container(
                       constraints: BoxConstraints.expand(),
                       child: NoRegisteredStudent(onAddStudent: _addStudent),
