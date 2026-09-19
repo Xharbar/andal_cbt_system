@@ -34,7 +34,7 @@ dependencies:
   battery_plus: ^6.1.0
   http: ^1.1.0
   postgres: ^3.0.0
-  font_awesome_flutter: ^10.12.0
+  shared_preferences: ^2.2.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -79,6 +79,7 @@ flutter:
     - lib/assets/security_alert.png
     - lib/assets/action_denied.png
     - lib/assets/password.png
+    - lib/assets/server_settings_ico.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,7 +1,12 @@
+import 'dart:ui';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:andal_cbt/custom_widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:andal_cbt/screens/exam_screen.dart';
 import 'package:andal_cbt/app_data/classes_n_subjects.dart';
 import 'package:andal_cbt/custom_widget/request_password_dialog.dart';
+import 'package:andal_cbt/custom_widget/settings_dialog.dart';
 import 'dart:io';
 import 'package:andal_cbt/app_data/student_db_service.dart';
 
@@ -27,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passKey = GlobalKey<FormState>();
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  final TextEditingController _serverIp = TextEditingController();
   bool _isLoading = false;
   final dbService = StudentDbService();
 
@@ -65,9 +71,42 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void showBlurredLoader(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withAlpha(50),
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Loader(),
+                SizedBox(height: 10.0),
+                Text(
+                  'Logging In...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _handleLogin() async {
+    String studentId = '$prefixId${_userController.text.trim()}';
     if (_passKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      /* ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Row(
             children: [
@@ -84,13 +123,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
-      );
+      ); */
 
+      showBlurredLoader(context);
+      await Future.delayed(Duration(seconds: 2));
       setState(() => _isLoading = true);
 
       try {
         final studentData = await dbService.loginStudent(
-          _userController.text.trim(),
+          studentId,
           _passController.text.trim(),
         );
 
@@ -98,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
           final studentName = studentData['fullName'];
 
           if (mounted) {
+            Navigator.pop(context);
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text("Welcome $studentName!")));
@@ -106,7 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => ExamScreen(
-                  studentId: "$prefixId${_userController.text.trim()}",
+                  studentName: '$studentName',
+                  studentId: studentId,
                   subject: "$_selectedSubject",
                   studentClass: "$_selectedClass",
                 ),
@@ -114,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           }
         } else if (mounted) {
+          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -125,6 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } catch (e) {
         if (mounted) {
+          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -139,6 +184,36 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     }
+  }
+
+  void openServerSettings(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    final serverIp = prefs.getString('server_ip') ?? '127.0.0.1';
+    _serverIp.text = serverIp;
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => SettingsDialog(
+        controller: _serverIp,
+        onSave: () {
+          prefs.setString('server_ip', _serverIp.text.trim());
+          if (Navigator.of(dialogContext).mounted) {
+            Navigator.pop(dialogContext);
+          }
+        },
+        onCancel: () {
+          _serverIp.clear();
+          if (Navigator.of(dialogContext).mounted) {
+            Navigator.pop(dialogContext);
+          }
+        },
+      ),
+    );
   }
 
   @override
@@ -199,12 +274,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.topRight,
                     margin: EdgeInsets.fromLTRB(0.0, 30.0, 30.0, 0.0),
                     height: 45.0,
-                    child: IconButton(
-                      tooltip: 'Exit',
-                      onPressed: () {
-                        exit(0);
-                      },
-                      icon: Icon(Icons.close, size: 28.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          tooltip: 'Server Settings',
+                          onPressed: () => openServerSettings(context),
+                          icon: Icon(Icons.settings, size: 28.0),
+                        ),
+                        SizedBox(width: 10.0),
+                        IconButton(
+                          tooltip: 'Exit',
+                          onPressed: () {
+                            exit(0);
+                          },
+                          icon: Icon(Icons.close, size: 28.0),
+                        ),
+                      ],
                     ),
                   ),
                 ),

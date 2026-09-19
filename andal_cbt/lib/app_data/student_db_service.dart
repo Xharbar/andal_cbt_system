@@ -1,4 +1,5 @@
 import 'package:postgres/postgres.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StudentDbService {
   static final StudentDbService _instance = StudentDbService._internal();
@@ -13,9 +14,12 @@ class StudentDbService {
       return _connection!;
     }
 
+    final prefs = await SharedPreferences.getInstance();
+    final serverIp = prefs.getString('server_ip') ?? '127.0.0.1';
+
     _connection = await Connection.open(
       Endpoint(
-        host: 'localhost',
+        host: serverIp,
         port: 5432,
         database: 'cbt_admin_db',
         username: 'postgres', // Your Postgres username

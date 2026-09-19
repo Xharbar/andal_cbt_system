@@ -17,11 +17,13 @@ import 'package:flutter/services.dart';
 class ExamScreen extends StatefulWidget {
   const ExamScreen({
     super.key,
+    required this.studentName,
     required this.studentId,
     required this.subject,
     required this.studentClass,
   });
 
+  final String studentName;
   final String studentId;
   final String subject;
   final String studentClass;
@@ -424,7 +426,7 @@ class _ExamScreenState extends State<ExamScreen> with WindowListener {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Shaba Emmanuel Ayobami",
+                            widget.studentName,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
