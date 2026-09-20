@@ -29,7 +29,9 @@ class _LoaderState extends State<Loader> {
               padding: EdgeInsetsGeometry.all(20.0),
               child: CircularProgressIndicator(
                 strokeWidth: 17.0,
-                valueColor: AlwaysStoppedAnimation(Colors.purple),
+                valueColor: AlwaysStoppedAnimation(
+                  Color.fromARGB(255, 133, 47, 113),
+                ),
                 backgroundColor: Colors.grey[300],
                 strokeCap: StrokeCap.round,
               ),

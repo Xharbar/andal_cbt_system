@@ -44,7 +44,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
   final postgresService = PostgresService();
 
   Timer? _passcodeTimer;
-  int _countdown = 60;
+  int _countdown = 30;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
             _countdown--;
           } else {
             // Timer hit 0! Reset timer and regenerate ALL passcodes
-            _countdown = 60;
+            _countdown = 30;
             for (var student in _students) {
               student.currentPasscode = generatePasscode();
               _onTimerExpired(student);
@@ -289,8 +289,8 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                               const SizedBox(width: 20),
                               IconButton(
                                 icon: const Icon(Icons.edit),
-                                onPressed: () => _regeneratePasscode(index),
-                                tooltip: "Regenerate Passcode",
+                                onPressed: () {},
+                                tooltip: "Edit Student info",
                               ),
                               SizedBox(width: 10),
                               Stack(
@@ -300,7 +300,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
-                                      value: _countdown / 60.0,
+                                      value: _countdown / 30.0,
                                       strokeWidth: 3.5,
                                       backgroundColor: Colors.white.withAlpha(
                                         20,

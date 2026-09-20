@@ -15,7 +15,7 @@ class StudentDbService {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final serverIp = prefs.getString('server_ip') ?? '127.0.0.1';
+    final serverIp = prefs.getString('server_ip') ?? 'localhost';
 
     _connection = await Connection.open(
       Endpoint(

@@ -1,12 +1,13 @@
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:andal_cbt/custom_widget/loader.dart';
+import 'package:andal_cbt/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:andal_cbt/screens/exam_screen.dart';
 import 'package:andal_cbt/app_data/classes_n_subjects.dart';
-import 'package:andal_cbt/custom_widget/request_password_dialog.dart';
-import 'package:andal_cbt/custom_widget/settings_dialog.dart';
+import 'package:andal_cbt/widgets/request_password_dialog.dart';
+import 'package:andal_cbt/widgets/settings_dialog.dart';
+import 'package:andal_cbt/widgets/error_alert.dart';
 import 'dart:io';
 import 'package:andal_cbt/app_data/student_db_service.dart';
 
@@ -106,25 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() async {
     String studentId = '$prefixId${_userController.text.trim()}';
     if (_passKey.currentState!.validate()) {
-      /* ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              SizedBox(
-                width: 24,
-                // height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3.0,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              ),
-              SizedBox(width: 16),
-              Text('Logging in...'),
-            ],
-          ),
-        ),
-      ); */
-
       showBlurredLoader(context);
       await Future.delayed(Duration(seconds: 2));
       setState(() => _isLoading = true);
@@ -137,12 +119,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (studentData != null) {
           final studentName = studentData['fullName'];
+          final studentClass = studentData['className'];
 
           if (mounted) {
             Navigator.pop(context);
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text("Welcome $studentName!")));
+            ).showSnackBar(SnackBar(content: Text("Welcome, $studentName!")));
 
             Navigator.pushReplacement(
               context,
@@ -151,30 +134,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   studentName: '$studentName',
                   studentId: studentId,
                   subject: "$_selectedSubject",
-                  studentClass: "$_selectedClass",
+                  studentClass: "$studentClass",
                 ),
               ),
             );
           }
         } else if (mounted) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "Invalid Registration Number or Passcode. Note: Passcodes expire every 60 seconds.",
-              ),
-              backgroundColor: Colors.red,
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => ErrorAlert(
+              image: 'lib/assets/auth_error.png',
+              title: 'Authentication Error',
+              content:
+                  'Invalid Registration Number or Passcode. Check your details and try again \nNote: Passcodes expire every 30 seconds.',
             ),
           );
         }
       } catch (e) {
         if (mounted) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "Connection Error: Make sure you are on the school Wi-Fi.",
-              ),
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => ErrorAlert(
+              image: 'lib/assets/connection_error.png',
+              title: 'Connection Error',
+              content:
+                  'Unable to connect to the server. Please check your network connection, make sure you are connected to the school Wi-Fi and try again.',
             ),
           );
         }
@@ -191,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
-    final serverIp = prefs.getString('server_ip') ?? '127.0.0.1';
+    final serverIp = prefs.getString('server_ip') ?? 'localhost';
     _serverIp.text = serverIp;
     if (!context.mounted) return;
 
@@ -335,6 +323,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   prefixIcon: Icon(Icons.person_outline),
                                   prefixText: prefixId,
                                 ),
+                                /* onEditingComplete: () {
+                                  if (_userController.text.length == 4) {
+                                    print('Complete');
+                                  }
+                                }, */
                                 validator: (v) =>
                                     v!.isEmpty ? "Required" : null,
                               ),

@@ -80,6 +80,8 @@ flutter:
     - lib/assets/action_denied.png
     - lib/assets/password.png
     - lib/assets/server_settings_ico.png
+    - lib/assets/auth_error.png
+    - lib/assets/connection_error.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
