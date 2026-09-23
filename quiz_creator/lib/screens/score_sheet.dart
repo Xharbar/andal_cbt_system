@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -124,20 +125,21 @@ class _StudentScoresScreenState extends State<StudentScoresScreen> {
       } else {
         // --- DESKTOP LOGIC (Save As Dialog) ---
 
-        String? output = await FilePicker.platform.saveFile(
+        Uri? output = await FilePicker.saveFile(
           dialogTitle: 'Save Scores CSV',
           fileName: fileName,
           type: FileType.custom,
           allowedExtensions: ['csv'],
+          bytes: Uint8List.fromList(csvBuffer.toString().codeUnits),
         );
 
         if (output != null) {
-          final file = File(output);
+          final file = File(output.path);
           await file.writeAsString(csvBuffer.toString());
           if (mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text("Exported to $output")));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Exported to ${output.path}")),
+            );
           }
         }
       }

@@ -22,7 +22,7 @@ class PdfPreviewScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => onSave(filePath), // Trigger save from here
+            onPressed: () => onSave(filePath),
           ),
         ],
       ),

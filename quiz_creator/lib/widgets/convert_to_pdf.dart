@@ -149,7 +149,7 @@ Future<void> generatePdf({
                     fontSize: 14,
                   ),
                 ),
-                if (imageWidget != null) imageWidget,
+                ?imageWidget,
                 pw.SizedBox(height: 5),
                 // pw.Wrap(
                 //   spacing: 20,
@@ -264,7 +264,8 @@ Future<void> generatePdf({
 Future<void> _saveAndOpenBytes(List<int> bytes, String fileName) async {
   try {
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      String? outputFile = await FilePicker.platform.saveFile(
+      final filePicker = FilePicker as dynamic;
+      final outputFile = await filePicker.platform.saveFile(
         dialogTitle: 'Save PDF',
         fileName: fileName,
         allowedExtensions: ['pdf'],

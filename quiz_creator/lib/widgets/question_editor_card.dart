@@ -120,10 +120,9 @@ class _QuestionEditorCardState extends State<QuestionEditorCard> {
                             ),
                             tooltip: "Add Image to Option",
                             onPressed: () async {
-                              FilePickerResult? result = await FilePicker
-                                  .platform
-                                  .pickFiles(type: FileType.image);
-                              if (result != null) {
+                              final result = await _pickImageFile();
+                              if (result != null &&
+                                  result.files.single.path != null) {
                                 setState(() {
                                   widget.question.optionImagePath[optIndex] =
                                       result.files.single.path!;
@@ -191,10 +190,13 @@ class _QuestionEditorCardState extends State<QuestionEditorCard> {
     );
   }
 
+  Future<dynamic> _pickImageFile() async {
+    final result = await FilePicker.pickFile(type: FileType.image);
+    return result;
+  }
+
   Future<void> _pickImage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
+    final result = await _pickImageFile();
     if (result != null) {
       setState(() {
         widget.question.imagePath = result.files.single.path;
@@ -203,7 +205,7 @@ class _QuestionEditorCardState extends State<QuestionEditorCard> {
   }
 
   // Future<void> _optionImage() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //   final result = await FilePicker.platform.pickFiles(
   //     type: FileType.image,
   //   );
   //   if (result != null) {
