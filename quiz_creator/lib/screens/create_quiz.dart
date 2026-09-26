@@ -170,7 +170,10 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
                               duration: _durationCtrl.text,
                               questions: _questions,
                             ),
-                            icon: const Icon(Icons.picture_as_pdf),
+                            icon: Icon(
+                              Icons.picture_as_pdf,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                             label: const Text("Export PDF"),
                           ),
                           const SizedBox(width: 12),
@@ -200,7 +203,10 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
                                 duration: _durationCtrl.text,
                                 questions: _questions,
                               ),
-                              icon: const Icon(Icons.picture_as_pdf),
+                              icon: Icon(
+                                Icons.picture_as_pdf,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                               // label: const Text("Export PDF"),
                             ),
                           ),
@@ -311,7 +317,7 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   "2. Questions",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
@@ -333,10 +339,11 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
+                child: Center(
                   child: Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(24.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
                           image: AssetImage(
@@ -348,6 +355,7 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
                         SizedBox(height: 10),
                         Text(
                           "No questions added yet. Click 'Add Question' to begin.",
+                          style: Theme.of(context).textTheme.bodyLarge,
                           textAlign: TextAlign.center,
                           softWrap: true,
                         ),
