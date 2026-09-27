@@ -37,17 +37,18 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
       // Simulate Network Delay
       // await Future.delayed(const Duration(seconds: 1));
       try {
-        await Supabase.instance.client.auth.signInWithPassword(
+        final auth = await Supabase.instance.client.auth.signInWithPassword(
           email: _userEmailController.text,
           password: _passwordController.text,
         );
 
-        if (mounted) {
-          // setState(() => _isLoading = false);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const DashboardShell()),
-          );
+        if (auth.user != null) {
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const DashboardShell()),
+            );
+          }
         } else if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Login Failed: Invalid Credentials")),
