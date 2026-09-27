@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_creator/widgets/error_alert.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:quiz_creator/screens/dashboard.dart';
@@ -47,11 +48,22 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
             context,
             MaterialPageRoute(builder: (_) => const DashboardShell()),
           );
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Login Failed: Invalid Credentials")),
+          );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Login Failed: Invalid Credentials")),
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: ((context) => ErrorAlert(
+              image: 'lib/assets/network_error.png',
+              title: 'Connection Error',
+              content:
+                  'An error occurred while trying to connect to the server. Check your internet connection, and try again.',
+            )),
           );
         }
       } finally {

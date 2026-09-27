@@ -88,6 +88,7 @@ flutter:
     - lib/assets/images/reset_password.png
     - lib/assets/images/under_construction.png
     - lib/assets/images/no_questions.png
+    - lib/assets/images/network_error.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
