@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_creator/widgets/error_alert.dart';
+import 'package:quiz_creator/widgets/loader.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:quiz_creator/widgets/error_alert.dart';
 import 'package:quiz_creator/screens/dashboard.dart';
 import 'package:quiz_creator/widgets/reset_password_dialog.dart';
 
@@ -36,6 +37,11 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
       // Simulate Network Delay
       // await Future.delayed(const Duration(seconds: 1));
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Loader(),
+      );
       try {
         final auth = await Supabase.instance.client.auth.signInWithPassword(
           email: _userEmailController.text,
@@ -44,6 +50,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
         if (auth.user != null) {
           if (mounted) {
+            Navigator.pop(context);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const DashboardShell()),
@@ -56,11 +63,12 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
         }
       } catch (e) {
         if (mounted) {
+          Navigator.pop(context);
           showDialog(
             context: context,
             barrierDismissible: false,
             builder: ((context) => ErrorAlert(
-              image: 'lib/assets/network_error.png',
+              image: 'lib/assets/images/network_error.png',
               title: 'Connection Error',
               content:
                   'An error occurred while trying to connect to the server. Check your internet connection, and try again.',

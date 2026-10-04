@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:cbt_admin_section/screens/student_mgt.dart';
 
@@ -29,6 +30,112 @@ class PostgresService {
       ),
     );
     return _connection!;
+  }
+
+  // --- CREATE DATABASE ---
+  /*Future<void> createDatabase() async {
+    final conn = await connection;
+    await conn.execute(
+      Sql.named('''
+        CREATE TABLE students (
+          id VARCHAR(255) PRIMARY KEY,
+          full_name VARCHAR(255) NOT NULL,
+          reg_number VARCHAR(100) UNIQUE NOT NULL,
+          class_name VARCHAR(50),
+          current_passcode VARCHAR(10),
+          is_active BOOLEAN DEFAULT TRUE
+        );
+    '''),
+    );
+  }*/
+  Future<void> createDatabaseAndTables(BuildContext context) async {
+    // Replace these with your actual server IP and postgres password
+    const String dbHost = 'localhost'; // or '192.168.1.15'
+    const String dbUser = 'postgres';
+    const String dbPassword = 'admin';
+    const String dbName = 'cbt_admin_db';
+
+    try {
+      // ---------------------------------------------------------
+      // 1. CONNECT TO DEFAULT 'postgres' DATABASE
+      // ---------------------------------------------------------
+      final defaultConn = await Connection.open(
+        Endpoint(
+          host: dbHost,
+          port: 5432,
+          database: 'postgres',
+          username: dbUser,
+          password: dbPassword,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      // 2. CHECK IF CBT DATABASE EXISTS
+      final checkResult = await defaultConn.execute(
+        """SELECT 1 FROM pg_database WHERE datname = '$dbName';""",
+      );
+
+      // 3. CREATE DATABASE IF IT DOESN'T EXIST
+      if (checkResult.isEmpty) {
+        await defaultConn.execute("CREATE DATABASE $dbName;");
+        print("Database '$dbName' created successfully.");
+      } else {
+        print("Database '$dbName' already exists.");
+      }
+
+      // Close the default connection
+      await defaultConn.close();
+
+      // ---------------------------------------------------------
+      // 4. CONNECT TO THE NEW 'cbt_admin_db'
+      // ---------------------------------------------------------
+      final cbtConn = await Connection.open(
+        Endpoint(
+          host: dbHost,
+          port: 5432,
+          database: dbName, // Connect to the new DB
+          username: dbUser,
+          password: dbPassword,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      // 5. CREATE TABLES (Using IF NOT EXISTS so it doesn't crash if run twice)
+      await cbtConn.execute('''
+        CREATE TABLE IF NOT EXISTS students (
+            id VARCHAR(255) PRIMARY KEY,
+            full_name VARCHAR(255) NOT NULL,
+            reg_number VARCHAR(100) UNIQUE NOT NULL,
+            class_name VARCHAR(50),
+            current_passcode VARCHAR(10),
+            is_active BOOLEAN DEFAULT TRUE
+        );
+      ''');
+
+      await cbtConn.close();
+
+      // Optional: Show Success UI
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Database and Tables successfully created!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context); // Close the dialog
+      }
+    } catch (e) {
+      // Handle Errors (e.g. wrong password, server off)
+      print("Database Setup Error: $e");
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Setup Failed: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   // --- CRUD OPERATIONS FOR STUDENTS ---

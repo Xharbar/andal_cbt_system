@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-ThemeData darkTheme() {
+ThemeData darkTheme(BuildContext context) {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
@@ -12,9 +12,7 @@ ThemeData darkTheme() {
     cardTheme: CardThemeData(
       elevation: 2,
       shadowColor: Colors.white30,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     scaffoldBackgroundColor: Colors.black12,
     inputDecorationTheme: InputDecorationTheme(
@@ -30,9 +28,7 @@ ThemeData darkTheme() {
       ),
     ),
     dataTableTheme: DataTableThemeData(
-      headingRowColor: WidgetStatePropertyAll(
-        Color(0xff81287b).withAlpha(130),
-      ),
+      headingRowColor: WidgetStatePropertyAll(Color(0xff81287b).withAlpha(130)),
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: Color(0xff201a1e),
@@ -45,7 +41,15 @@ ThemeData darkTheme() {
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: Color(0xff201a1e),
-      contentTextStyle: TextStyle(color: Colors.white),
+      contentTextStyle: TextStyle(
+        color: Colors.white,
+        fontFamily: 'GoogleSans',
+      ),
+      /*titleTextStyle: TextStyle(
+        fontFamily: 'GoogleSans',
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),*/
     ),
   );
 }

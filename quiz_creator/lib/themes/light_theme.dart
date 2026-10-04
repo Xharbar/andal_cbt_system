@@ -12,9 +12,7 @@ ThemeData lightTheme() {
     cardTheme: CardThemeData(
       elevation: 3,
       color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       labelStyle: TextStyle(fontSize: 14),
@@ -37,6 +35,16 @@ ThemeData lightTheme() {
       contentTextStyle: TextStyle(fontFamily: 'GoogleSans'),
       dismissDirection: DismissDirection.horizontal,
       showCloseIcon: true,
+    ),
+    dialogTheme: DialogThemeData(
+      titleTextStyle: TextStyle(
+        fontFamily: 'GoogleSans',
+        fontWeight: FontWeight.bold,
+      ),
+      contentTextStyle: TextStyle(
+        fontFamily: 'GoogleSans',
+        color: Colors.black
+      )
     ),
   );
 }

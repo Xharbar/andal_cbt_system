@@ -36,7 +36,7 @@ class _TeacherAppState extends State<TeacherApp> {
       title: 'Andal Teacher Portal',
       debugShowCheckedModeBanner: false,
       theme: lightTheme(),
-      darkTheme: darkTheme(),
+      darkTheme: darkTheme(context),
 
       themeMode: ThemeMode.system,
       home: const TeacherLoginScreen(),

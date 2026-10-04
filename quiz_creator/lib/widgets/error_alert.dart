@@ -38,40 +38,28 @@ class _ErrorAlertState extends State<ErrorAlert> {
             Text(
               widget.title,
               style: TextStyle(
-                fontSize: 28.0,
+                fontSize: Theme.of(context).textTheme.displaySmall?.fontSize,
                 fontWeight: FontWeight.bold,
                 color: Color.fromARGB(255, 133, 47, 113),
               ),
             ),
             SizedBox(height: 10.0),
-            Text(widget.content, textAlign: TextAlign.center),
+            Text(
+              widget.content,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           ],
         ),
         actions: [
           SizedBox(
-            height: 40.0,
+            height: 50.0,
             width: double.infinity,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 133, 47, 113),
-                    Color.fromARGB(255, 0, 87, 38),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: FilledButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("OK"),
-              ),
+            child: FilledButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
             ),
           ),
         ],

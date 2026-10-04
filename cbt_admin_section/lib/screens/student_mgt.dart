@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:cbt_admin_section/services/student_postgres_service.dart';
+import 'package:cbt_admin_section/widgets/create_db_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
@@ -117,9 +118,19 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
       if (!mounted) return;
       setState(() => _isLoading = false);
       // Show error if DB is down
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("DB Error: $e")));
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => CreateDbDialog(
+          image: 'lib/assets/images/db_error.png',
+          title: 'Database not Found',
+          content: '$e',
+          onCreate: () async {
+            await Future.delayed(Duration(seconds: 3));
+            postgresService.createDatabaseAndTables(context);
+          },
+        ),
+      );
     }
   }
 
@@ -147,7 +158,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
     await _loadStudentsFromDb(); // Refresh list
   }
 
-  void _regeneratePasscode(int index) {
+  /*void _regeneratePasscode(int index) {
     setState(() {
       _students[index].currentPasscode = generatePasscode();
     });
@@ -158,7 +169,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
         ),
       ),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {

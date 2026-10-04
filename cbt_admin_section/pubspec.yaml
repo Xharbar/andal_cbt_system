@@ -80,6 +80,7 @@ flutter:
     - lib/assets/images/error_2.png
     - lib/assets/images/home_background.jpg
     - lib/assets/images/login_background.jpg
+    - lib/assets/images/db_error.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
