@@ -72,7 +72,7 @@ class PostgresService {
 
       // 2. CHECK IF CBT DATABASE EXISTS
       final checkResult = await defaultConn.execute(
-        """SELECT 1 FROM pg_database WHERE datname = '$dbName';""",
+        "SELECT 1 FROM pg_database WHERE datname = '$dbName'",
       );
 
       // 3. CREATE DATABASE IF IT DOESN'T EXIST
@@ -110,6 +110,17 @@ class PostgresService {
             current_passcode VARCHAR(10),
             is_active BOOLEAN DEFAULT TRUE
         );
+      ''');
+
+      await cbtConn.execute('''
+        CREATE TABLE IF NOT EXISTS scores (
+            id VARCHAR(255) PRIMARY KEY,
+            student_reg_number VARCHAR(100) REFERENCES students(reg_number),
+            subject VARCHAR(100),
+            score INTEGER,
+            total INTEGER,
+            date_taken TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
       ''');
 
       await cbtConn.close();

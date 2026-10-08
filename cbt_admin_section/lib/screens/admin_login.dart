@@ -35,7 +35,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
             child: const Dialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              child: Loader(),
+              child: Loader(text: 'Logging in...'),
             ),
           ),
         );

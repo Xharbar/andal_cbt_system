@@ -56,7 +56,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
               MaterialPageRoute(builder: (_) => const DashboardShell()),
             );
           }
-        } else if (mounted) {
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Login Failed: Invalid Credentials")),
           );

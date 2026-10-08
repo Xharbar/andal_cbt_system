@@ -74,7 +74,7 @@ class _AdminHomeState extends State<AdminHome>
             child: const Dialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              child: Loader(),
+              child: Loader(text: 'Logging out...'),
             ),
           ),
         );
@@ -84,9 +84,9 @@ class _AdminHomeState extends State<AdminHome>
 
   void _logout() async {
     setState(() => _loggingOut = true);
-    ScaffoldMessenger.of(
+    /*ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Logging out...')));
+    ).showSnackBar(const SnackBar(content: Text('Logging out...')));*/
 
     showBlurredLoader(context);
 
