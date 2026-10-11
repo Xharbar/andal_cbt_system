@@ -43,13 +43,13 @@ class _NavigationButtonState extends State<NavigationButton> {
                 widget.header, // .toUpperCase(),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: Theme.of(context).textTheme.displayMedium!.fontSize,
+                  fontSize: Theme.of(context).textTheme.displaySmall!.fontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 widget.description,
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               Image.asset(
@@ -63,7 +63,7 @@ class _NavigationButtonState extends State<NavigationButton> {
               Text(
                 widget.actionDesc,
                 style: TextStyle(
-                  fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),

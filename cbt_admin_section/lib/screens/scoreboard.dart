@@ -113,7 +113,10 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
           Expanded(
             child: SizedBox.expand(
               child: Container(
-                color: Theme.of(context).cardTheme.color,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardTheme.color,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Scrollbar(

@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:cbt_admin_section/screens/admin_login.dart';
 import 'package:cbt_admin_section/themes/light_theme.dart';
 import 'package:cbt_admin_section/themes/dark_theme.dart';
-import 'package:window_manager/window_manager.dart';
+
 // import 'package:cbt_admin_section/screens/admin_home.dart';
 
-void main() async {
+Future<void> main() async {
+  // void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: 'https://ggglwxifkkvoqmtddbxh.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnZ2x3eGlma2t2b3FtdGRkYnhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NTQ4OTQsImV4cCI6MjA4OTAzMDg5NH0.tOX_3ih8-tozu2gqVUOdKMfaYCTo8LQXIIo6c_sG5kI',
+  );
 
   // Initialize the window manager
   await windowManager.ensureInitialized();

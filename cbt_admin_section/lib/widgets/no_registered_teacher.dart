@@ -26,7 +26,7 @@ class _NoRegisteredTeacherState extends State<NoRegisteredTeacher> {
           "No teachers are currently registered. \nPlease click the Add Teacher button below to register a teacher.",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             color: Theme.of(context).textTheme.bodyMedium!.color,
           ),
         ),

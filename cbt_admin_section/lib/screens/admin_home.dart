@@ -143,8 +143,13 @@ class _AdminHomeState extends State<AdminHome>
                   ),
                   SizedBox(width: 15.0),
                   Text(
-                    'Admin Home',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    'Admin Home'.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: Theme.of(
+                        context,
+                      ).textTheme.headlineMedium?.fontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Spacer(),
                   SizedBox(

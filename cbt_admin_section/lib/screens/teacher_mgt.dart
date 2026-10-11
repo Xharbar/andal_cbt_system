@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cbt_admin_section/services/teacher_postgres_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:cbt_admin_section/services/teacher_postgres_service.dart';
 import 'package:cbt_admin_section/widgets/no_registered_teacher.dart';
 import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
@@ -33,6 +34,7 @@ class TeacherManagementPage extends StatefulWidget {
 }
 
 class _TeacherManagementPageState extends State<TeacherManagementPage> {
+  List<Teacher> _teachers = [];
   bool showAddPanel = false;
   bool _isLoading = false;
   final postgresService = PostgresService();
@@ -41,20 +43,42 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
   @override
   void initState() {
     super.initState();
-    _loadTeachersFromDb();
+    _fetchTeachersFromSupabase();
   }
 
-  Future<void> _loadTeachersFromDb() async {
+  Future<void> _fetchTeachersFromSupabase() async {
     if (!mounted) return;
     setState(() => _isLoading = true);
     try {
-      final teachers = await postgresService.getTeachers();
+      /* final teachers = await postgresService.getTeachers();
       await Future.delayed(Duration(seconds: 1));
       if (!mounted) return;
       setState(() {
         _teachers = teachers;
         _isLoading = false;
-      });
+      }); */
+      final List<dynamic> response = await Supabase.instance.client
+          .from('teachers')
+          .select()
+          .order('full_name', ascending: true);
+      final List<Teacher> teachers = response.map((teacherData) {
+        return Teacher(
+          teacherData['id'] as String,
+          teacherData['full_name'] as String,
+          teacherData['email'] as String,
+          teacherData['subject_assigned'] as String? ??
+              'N/A', // Default to 'N/A' if null
+          '', // Password is not fetched for security reasons
+        );
+      }).toList();
+
+      if (!mounted) {
+        setState(() {
+          _teachers = teachers;
+          _isLoading = false;
+        });
+      }
+      ;
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -106,7 +130,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                       ),
                     );
 
-                    if (!mounted) return;
+                    /* if (!mounted) return;
                     setState(() => _isLoading = true);
                     await postgresService.insertTeacher(
                       context,
@@ -117,10 +141,17 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                         newTeacherData['subject'],
                         newTeacherData['password'],
                       ),
-                    );
+                    ); */
+
+                    /* await supabaseService.createTeacherAccount(
+                      name: newTeacherData['name'],
+                      email: newTeacherData['email'],
+                      password: newTeacherData['password'],
+                      subjects: [newTeacherData['subject']],
+                    ); */
 
                     if (!mounted) return;
-                    await _loadTeachersFromDb(); // Refresh the list after adding
+                    await _fetchTeachersFromSupabase(); // Refresh the list after adding
                   },
                 ),
               ),
@@ -146,7 +177,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     setState(() => _isLoading = true);
     await postgresService.deleteTeacher(id);
     if (!mounted) return;
-    await _loadTeachersFromDb(); // Refresh list
+    await _fetchTeachersFromSupabase(); // Refresh list
   }
 
   @override
@@ -188,6 +219,8 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                             setState(() => _searchQuery = value),
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search),
+                          hintText: 'Search',
+                          hintStyle: TextStyle(color: Colors.white70),
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 10.0,
@@ -324,5 +357,3 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     );
   }
 }
-
-List<Teacher> _teachers = [];

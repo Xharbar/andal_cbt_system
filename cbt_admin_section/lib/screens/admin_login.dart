@@ -124,9 +124,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      const Text(
+                      Text(
                         "Aspire to Inspire...",
-                        style: TextStyle(fontSize: 16),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),

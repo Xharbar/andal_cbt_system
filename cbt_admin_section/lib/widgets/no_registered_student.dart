@@ -21,7 +21,7 @@ class NoRegisteredStudent extends StatelessWidget {
           "No students are currently registered. \nPlease click the Add Student button below to register a student.",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             color: Theme.of(context).textTheme.bodyMedium!.color,
           ),
         ),

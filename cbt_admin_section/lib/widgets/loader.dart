@@ -24,18 +24,18 @@ class _LoaderState extends State<Loader> {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(35),
                 ),
                 constraints: BoxConstraints(
-                  minWidth: 150,
-                  minHeight: 150,
-                  maxHeight: 150,
-                  maxWidth: 150,
+                  minWidth: 100,
+                  minHeight: 100,
+                  maxHeight: 100,
+                  maxWidth: 100,
                 ),
                 child: Padding(
-                  padding: EdgeInsetsGeometry.all(20.0),
+                  padding: EdgeInsetsGeometry.all(15.0),
                   child: CircularProgressIndicator(
-                    strokeWidth: 17.0,
+                    strokeWidth: 12.0,
                     valueColor: AlwaysStoppedAnimation(Colors.purple),
                     backgroundColor: Colors.grey[300],
                     strokeCap: StrokeCap.round,
@@ -44,13 +44,19 @@ class _LoaderState extends State<Loader> {
               ),
               Image.asset(
                 'lib/assets/images/andal_logo_circular.png',
-                width: 85,
-                height: 85,
+                width: 50,
+                height: 50,
               ),
             ],
           ),
           SizedBox(height: 5.0),
-          Text(widget.text, style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            widget.text,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+              letterSpacing: 1.2,
+            ),
+          ),
         ],
       ),
     );

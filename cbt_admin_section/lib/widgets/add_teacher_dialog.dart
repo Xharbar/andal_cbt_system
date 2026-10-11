@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cbt_admin_section/services/supabase_admin_service.dart';
 
 import 'package:cbt_admin_section/data/classes_subjects.dart';
 
@@ -18,6 +19,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
   final passCtrl = TextEditingController();
   final confirmPassCtrl = TextEditingController();
   bool obscurePassword = true;
+  final supabaseService = SupabaseAdminService();
 
   List<String> allSubjects = {...juniorSubjects, ...seniorSubjects}.toList();
   final List<String> _selectedSubject = [];
@@ -230,7 +232,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                 height: 50.0,
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: () {
+                  /* onPressed: () {
                     if (formKey.currentState!.validate()) {
                       if (_selectedSubject.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -241,11 +243,62 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                         return;
                       }
                       widget.onSave({
-                        'name': nameCtrl.text,
-                        'email': emailCtrl.text,
-                        'password': passCtrl.text,
+                        'name': nameCtrl.text.trim(),
+                        'email': emailCtrl.text.trim(),
+                        'password': passCtrl.text.trim(),
                         'subject': _selectedSubject.join(", "),
                       });
+                    }
+                  }, */
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      if (_selectedSubject.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Please assign at least one subject.",
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      // 1. Show loading indicator (Optional but recommended)
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Creating Teacher Account..."),
+                        ),
+                      );
+
+                      try {
+                        // 2. CALL SUPABASE SERVICE
+                        await supabaseService.createTeacherAccount(
+                          name: nameCtrl.text.trim(),
+                          email: emailCtrl.text.trim(),
+                          password: passCtrl.text.trim(),
+                          subjects: _selectedSubject,
+                        );
+
+                        // 3. Pass data back to UI to update the local table visually
+                        if (mounted) {
+                          widget.onSave({
+                            'name': nameCtrl.text,
+                            'email': emailCtrl.text,
+                            'password': passCtrl.text,
+                            'subject': _selectedSubject.join(', '),
+                          });
+                        }
+                      } catch (e) {
+                        // 4. Handle Errors (e.g. email already exists)
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     }
                   },
                   icon: Icon(Icons.save, size: 36.0),
