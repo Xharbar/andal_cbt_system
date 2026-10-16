@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:cbt_admin_section/services/teacher_postgres_service.dart';
-import 'package:cbt_admin_section/widgets/no_registered_teacher.dart';
+import 'package:cbt_admin_section/widgets/fallback.dart';
 import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
 
@@ -37,6 +37,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
   List<Teacher> _teachers = [];
   bool showAddPanel = false;
   bool _isLoading = false;
+  bool _hasInternetError = false;
   final postgresService = PostgresService();
   String _searchQuery = '';
 
@@ -47,8 +48,9 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
   }
 
   Future<void> _fetchTeachersFromSupabase() async {
-    if (!mounted) return;
+    // if (!mounted) return;
     setState(() => _isLoading = true);
+
     try {
       /* final teachers = await postgresService.getTeachers();
       await Future.delayed(Duration(seconds: 1));
@@ -61,6 +63,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
           .from('teachers')
           .select()
           .order('full_name', ascending: true);
+
       final List<Teacher> teachers = response.map((teacherData) {
         return Teacher(
           teacherData['id'] as String,
@@ -72,20 +75,40 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
         );
       }).toList();
 
-      if (!mounted) {
+      if (mounted) {
         setState(() {
           _teachers = teachers;
           _isLoading = false;
         });
       }
-      ;
     } catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      // Show error if DB is down
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("DB Error: $e")));
+      /* if (mounted) {
+        setState(() => _isLoading = false);
+        setState(() => _hasInternetError = true);
+        // Show error if DB is down
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("DB Error: $e"), backgroundColor: Colors.red),
+        );
+      } */
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          // 2. Check if the error is network-related (Supabase usually throws SocketExceptions for offline)
+          if (e.toString().contains('SocketException') ||
+              e.toString().contains('Failed host lookup') ||
+              e.toString().contains('ClientException')) {
+            _hasInternetError = true;
+          } else {
+            // It's a different error (like RLS or bad query), show a snackbar
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Database Error: $e"),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        });
+      }
     }
   }
 
@@ -213,46 +236,47 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
               ),
               Spacer(),
               ?_teachers.isNotEmpty
-                  ? Expanded(
-                      child: TextField(
-                        onChanged: (value) =>
-                            setState(() => _searchQuery = value),
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search),
-                          hintText: 'Search',
-                          hintStyle: TextStyle(color: Colors.white70),
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10.0,
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            onChanged: (value) =>
+                                setState(() => _searchQuery = value),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.search),
+                              hintText: 'Search',
+                              hintStyle: TextStyle(color: Colors.white70),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              constraints: BoxConstraints(maxWidth: 200),
+                            ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          constraints: BoxConstraints(maxWidth: 200),
                         ),
-                      ),
+                        SizedBox(width: 10.0),
+                        SizedBox(
+                          height: 50.0,
+                          child: FilledButton.icon(
+                            onPressed: () => setState(() {
+                              _openAddTeacherPanel();
+                            }),
+                            icon: const Icon(Icons.person_add),
+                            label: const Text("Add Teacher"),
+                          ),
+                        ),
+                        SizedBox(width: 10.0),
+                        IconButton.filled(
+                          onPressed: () {},
+                          icon: Icon(Icons.cloud_sync),
+                          iconSize: 35.0,
+                          tooltip: 'Sync with server',
+                        ),
+                      ],
                     )
                   : null,
-              SizedBox(width: 10.0),
-              ?_teachers.isNotEmpty
-                  ? SizedBox(
-                      height: 50.0,
-                      child: FilledButton.icon(
-                        onPressed: () => setState(() {
-                          _openAddTeacherPanel();
-                        }),
-                        icon: const Icon(Icons.person_add),
-                        label: const Text("Add Teacher"),
-                      ),
-                    )
-                  : null,
-              SizedBox(width: 10.0),
-              IconButton.filled(
-                onPressed: () {},
-                icon: Icon(Icons.cloud_sync),
-                iconSize: 35.0,
-                tooltip: 'Sync with server',
-              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -282,6 +306,22 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                                 Text('Fetching data...'),
                               ],
                             ),
+                          )
+                        : _hasInternetError
+                        ? Fallback(
+                            image:
+                                'lib/assets/images/no_internet_connection.png',
+                            description:
+                                'No Internet Connection or Server is Down',
+                            onResolve: () {
+                              setState(() {
+                                _hasInternetError = false;
+                                _isLoading = true;
+                                _fetchTeachersFromSupabase();
+                              });
+                            },
+                            buttonLabel: 'Retry',
+                            buttonIcon: Icons.refresh,
                           )
                         : _teachers.isNotEmpty
                         ? SingleChildScrollView(
@@ -341,11 +381,13 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                                   .toList(),
                             ),
                           )
-                        : Container(
-                            constraints: BoxConstraints.expand(),
-                            child: NoRegisteredTeacher(
-                              onAddTeacher: () => _openAddTeacherPanel(),
-                            ),
+                        : Fallback(
+                            image: 'lib/assets/images/no_teacher.png',
+                            description:
+                                'No teachers are currently registered. \nPlease click the Add Teacher button below to register a teacher.',
+                            onResolve: () => _openAddTeacherPanel(),
+                            buttonLabel: 'Add Teacher',
+                            buttonIcon: Icons.add_moderator,
                           ),
                   ),
                 ),

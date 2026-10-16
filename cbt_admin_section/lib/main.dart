@@ -15,8 +15,7 @@ Future<void> main() async {
   // Initialize Supabase
   await Supabase.initialize(
     url: 'https://ggglwxifkkvoqmtddbxh.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnZ2x3eGlma2t2b3FtdGRkYnhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NTQ4OTQsImV4cCI6MjA4OTAzMDg5NH0.tOX_3ih8-tozu2gqVUOdKMfaYCTo8LQXIIo6c_sG5kI',
+    publishableKey: 'sb_publishable_xXPq8pZhPffycb1Uem0A9A_z7bSasV7',
   );
 
   // Initialize the window manager

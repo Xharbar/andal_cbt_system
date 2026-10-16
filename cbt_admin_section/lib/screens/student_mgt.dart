@@ -41,6 +41,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
   List<String> subjects = [];
   List<Student> _students = [];
   String _selectedClassFilter = "All";
+  String _searchQuery = '';
   bool _isLoading = true;
   final postgresService = PostgresService();
 
@@ -173,9 +174,34 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredStudents = _selectedClassFilter == "All"
+    /* final filteredStudents = _selectedClassFilter == "All"
         ? _students
-        : _students.where((s) => s.stdClass == _selectedClassFilter).toList();
+        : _students.where((s) => s.stdClass == _selectedClassFilter).toList(); */
+
+    /* final filteredStudent = _searchQuery.isEmpty
+        ? _students
+        : _students
+              .where(
+                (student) => student.fullName.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ),
+              )
+              .toList(); */
+
+    final filteredStudents = _students.where((s) {
+      // Check if it matches the Class Dropdown
+      final matchesClass =
+          _selectedClassFilter == "All" || s.stdClass == _selectedClassFilter;
+
+      // Check if it matches the Search Bar (Checking both Name and Reg Number)
+      final matchesSearch =
+          _searchQuery.isEmpty ||
+          s.fullName.toLowerCase().contains(_searchQuery) ||
+          s.regNumber.toLowerCase().contains(_searchQuery);
+
+      // Return true only if it passes BOTH filters
+      return matchesClass && matchesSearch;
+    }).toList();
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -201,6 +227,22 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                 children: _students.isEmpty
                     ? []
                     : [
+                        TextField(
+                          onChanged: (value) =>
+                              setState(() => _searchQuery = value),
+                          decoration: InputDecoration(
+                            constraints: BoxConstraints(
+                              minWidth: 250.0,
+                              maxWidth: 250.0,
+                            ),
+                            prefixIcon: Icon(Icons.search),
+                            hintText: 'Search',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 15.0),
                         DropdownMenu<String>(
                           initialSelection: "All",
                           label: const Text("Filter by Class"),
