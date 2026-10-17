@@ -1,9 +1,8 @@
 import 'dart:ui';
-
-import 'package:cbt_admin_section/widgets/loader.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cbt_admin_section/screens/admin_home.dart';
+import 'package:cbt_admin_section/widgets/loader.dart';
 
 // ==========================================
 // LOGIN SCREEN
@@ -44,22 +43,11 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   }
 
   void _login() async {
-    // Mock Auth
-    /* if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const AdminHome()),
-      );
-    } */
     if (_formKey.currentState!.validate()) {
       showBlurredLoader(context);
 
       try {
         await Future.delayed(const Duration(seconds: 3));
-
-        /* if (mounted) {
-          Navigator.pop(context);
-        } */
         if (mounted) {
           Navigator.pop(context);
         }

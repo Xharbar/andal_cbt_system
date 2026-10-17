@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+// import 'package:cbt_admin_section/data/student_scores.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
-import 'package:cbt_admin_section/data/student_scores.dart';
+import 'package:cbt_admin_section/widgets/fallback.dart';
+import 'package:cbt_admin_section/services/student_postgres_service.dart';
 
 class ScoreRecord {
   String regNumber;
@@ -33,12 +35,45 @@ class ScoreboardPage extends StatefulWidget {
 }
 
 class _ScoreboardPageState extends State<ScoreboardPage> {
+  final postgresService = PostgresService();
   String _selectedSubject = "All";
   String _selectedClass = "All";
+  List<ScoreRecord> _allScores = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _getScores();
+  }
+
+  Future<void> _getScores() async {
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+    try {
+      final scores = await postgresService.getScores();
+      await Future.delayed(Duration(seconds: 1));
+      if (!mounted) return;
+      setState(() {
+        _allScores = scores;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'An error occured while getting the scores from server',
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filteredScores = allScores.where((s) {
+    final filteredScores = _allScores.where((s) {
       final bool subjectMatch =
           _selectedSubject == "All" || s.subject == _selectedSubject;
       final bool classMatch =
@@ -117,54 +152,72 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
                   color: Theme.of(context).cardTheme.color,
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Scrollbar(
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text("Reg Number")),
-                        DataColumn(label: Text("Student Name")),
-                        DataColumn(label: Text("Class")),
-                        DataColumn(label: Text("Subject")),
-                        DataColumn(label: Text("Score")),
-                        DataColumn(label: Text("Verdict")),
-                      ],
-                      rows: filteredScores.map((s) {
-                        bool passed = s.score >= 50;
-                        return DataRow(
-                          cells: [
-                            DataCell(Text(s.regNumber)),
-                            DataCell(Text(s.studentName)),
-                            DataCell(Text(s.studentClass)),
-                            DataCell(Text(s.subject)),
-                            DataCell(Text("${s.score} / ${s.total}")),
-                            DataCell(
-                              Text(
-                                passed ? "PASS" : "FAIL",
-                                style: TextStyle(
-                                  color: passed ? Colors.green : Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                child: _isLoading
+                    ? Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            strokeWidth: 10.0,
+                            valueColor: AlwaysStoppedAnimation(
+                              Theme.of(context).primaryColor,
                             ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
+                            backgroundColor: Colors.grey[300],
+                            strokeCap: StrokeCap.butt,
+                          ),
+                          SizedBox(height: 10.0),
+                          Text('Fetching data...'),
+                        ],
+                      )
+                    : _allScores.isNotEmpty
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Scrollbar(
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text("Reg Number")),
+                              DataColumn(label: Text("Student Name")),
+                              DataColumn(label: Text("Class")),
+                              DataColumn(label: Text("Subject")),
+                              DataColumn(label: Text("Score")),
+                              DataColumn(label: Text("Verdict")),
+                            ],
+                            rows: filteredScores.map((s) {
+                              bool passed = s.score >= 50;
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(s.regNumber)),
+                                  DataCell(Text(s.studentName)),
+                                  DataCell(Text(s.studentClass)),
+                                  DataCell(Text(s.subject)),
+                                  DataCell(Text("${s.score} / ${s.total}")),
+                                  DataCell(
+                                    Text(
+                                      passed ? "PASS" : "FAIL",
+                                      style: TextStyle(
+                                        color: passed
+                                            ? Colors.green
+                                            : Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      )
+                    : Fallback(
+                        image: 'lib/assets/images/error_2.png',
+                        description: 'No student scores yet.',
+                        onResolve: () => _getScores(),
+                        buttonLabel: 'Reload',
+                        buttonIcon: Icons.refresh,
+                      ),
               ),
             ),
           ),
-          /* const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.cloud_upload),
-              label: const Text("Sync Scores to Server"),
-            ),
-          ), */
         ],
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
+
+import 'package:cbt_admin_section/screens/scoreboard.dart';
 import 'package:cbt_admin_section/screens/student_mgt.dart';
 
 class PostgresService {
@@ -219,5 +221,27 @@ class PostgresService {
       '''),
       parameters: {'passcode': newPasscode, 'regNumber': regNumber},
     );
+  }
+
+  Future<List<ScoreRecord>> getScores() async {
+    final conn = await connection;
+    final result = await conn.execute(
+      'SELECT * FROM scores ORDER BY full_name ASC',
+    );
+
+    List<ScoreRecord> studentsScores = [];
+    for (final row in result) {
+      studentsScores.add(
+        ScoreRecord(
+          row[0] as String, // reg_number
+          row[1] as String, // full_name
+          row[2] as String, // class
+          row[3] as String, // subject
+          row[4] as int, // score
+          row[5] as int, // total
+        ),
+      );
+    }
+    return studentsScores;
   }
 }

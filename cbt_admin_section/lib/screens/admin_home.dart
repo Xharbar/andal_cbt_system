@@ -1,12 +1,11 @@
 import 'dart:ui';
-
-import 'package:cbt_admin_section/screens/admin_login.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cbt_admin_section/widgets/navigation_button.dart';
 import 'package:cbt_admin_section/screens/admin_dashboard.dart';
+import 'package:cbt_admin_section/screens/admin_login.dart';
 import 'package:cbt_admin_section/widgets/fly_in_animation.dart';
 import 'package:cbt_admin_section/widgets/loader.dart';
+import 'package:cbt_admin_section/widgets/navigation_button.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({super.key});
@@ -84,10 +83,6 @@ class _AdminHomeState extends State<AdminHome>
 
   void _logout() async {
     setState(() => _loggingOut = true);
-    /*ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Logging out...')));*/
-
     showBlurredLoader(context);
 
     Future.delayed(const Duration(seconds: 3), () {

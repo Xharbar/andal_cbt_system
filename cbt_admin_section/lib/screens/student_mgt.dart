@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:cbt_admin_section/services/student_postgres_service.dart';
-import 'package:cbt_admin_section/widgets/create_db_dialog.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
-import 'package:cbt_admin_section/widgets/no_registered_student.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
+import 'package:cbt_admin_section/services/student_postgres_service.dart';
+import 'package:cbt_admin_section/widgets/add_students_dialog.dart';
+import 'package:cbt_admin_section/widgets/create_db_dialog.dart';
+import 'package:cbt_admin_section/widgets/fallback.dart';
 
 class Student {
   String id;
@@ -51,7 +51,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
   @override
   void initState() {
     super.initState();
-    _loadStudentsFromDb();
+    loadStudentsFromDb();
     _startTimer();
   }
 
@@ -104,7 +104,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
     }
   }
 
-  Future<void> _loadStudentsFromDb() async {
+  Future<void> loadStudentsFromDb() async {
     if (!mounted) return;
     setState(() => _isLoading = true);
     try {
@@ -135,11 +135,39 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
     }
   }
 
-  void _addStudent() async {
-    final Student? newStudent = await showDialog<Student>(
+  void _openAddStudentPanel() async {
+    final newStudent = await showGeneralDialog<Student>(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => const AddStudentsDialog(),
+      barrierLabel: "Close",
+      // barrierColor: Colors.black.withAlpha(127), // Dims the background
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Padding(
+          padding: EdgeInsetsGeometry.all(20.0),
+          child: Align(
+            alignment: Alignment.centerRight, // Aligns panel to the right
+            child: Material(
+              color: Colors.transparent,
+              elevation: 16,
+              child: SizedBox(
+                width: 400, // Fixed width for the side panel
+                height: double.infinity, // Full height
+                child: AddStudentsDialog(),
+              ),
+            ),
+          ),
+        );
+      },
+      // This makes it slide in from the right edge
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0), // Starts off-screen to the right
+            end: Offset.zero, // Ends at its normal position
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
     );
 
     if (newStudent != null) {
@@ -147,7 +175,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
       setState(() => _isLoading = true);
       await postgresService.insertStudent(newStudent);
       if (!mounted) return;
-      await _loadStudentsFromDb(); // Refresh list
+      await loadStudentsFromDb(); // Refresh list
     }
   }
 
@@ -156,38 +184,11 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
     setState(() => _isLoading = true);
     await postgresService.deleteStudent(id);
     if (!mounted) return;
-    await _loadStudentsFromDb(); // Refresh list
+    await loadStudentsFromDb(); // Refresh list
   }
-
-  /*void _regeneratePasscode(int index) {
-    setState(() {
-      _students[index].currentPasscode = generatePasscode();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "New Passcode for ${_students[index].fullName}: ${_students[index].currentPasscode}",
-        ),
-      ),
-    );
-  }*/
 
   @override
   Widget build(BuildContext context) {
-    /* final filteredStudents = _selectedClassFilter == "All"
-        ? _students
-        : _students.where((s) => s.stdClass == _selectedClassFilter).toList(); */
-
-    /* final filteredStudent = _searchQuery.isEmpty
-        ? _students
-        : _students
-              .where(
-                (student) => student.fullName.toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
-                ),
-              )
-              .toList(); */
-
     final filteredStudents = _students.where((s) {
       // Check if it matches the Class Dropdown
       final matchesClass =
@@ -196,8 +197,8 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
       // Check if it matches the Search Bar (Checking both Name and Reg Number)
       final matchesSearch =
           _searchQuery.isEmpty ||
-          s.fullName.toLowerCase().contains(_searchQuery) ||
-          s.regNumber.toLowerCase().contains(_searchQuery);
+          s.fullName.contains(_searchQuery) ||
+          s.regNumber.contains(_searchQuery);
 
       // Return true only if it passes BOTH filters
       return matchesClass && matchesSearch;
@@ -265,7 +266,7 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                         SizedBox(
                           height: 50,
                           child: FilledButton.icon(
-                            onPressed: _addStudent,
+                            onPressed: _openAddStudentPanel,
                             icon: const Icon(Icons.add),
                             label: const Text("New Student"),
                           ),
@@ -298,9 +299,13 @@ class _StudentManagementPageState extends State<StudentManagementPage> {
                       ),
                     )
                   : _students.isEmpty
-                  ? Container(
-                      constraints: BoxConstraints.expand(),
-                      child: NoRegisteredStudent(onAddStudent: _addStudent),
+                  ? Fallback(
+                      image: 'lib/assets/images/no_student.png',
+                      description:
+                          'No students are currently registered. \nPlease click the Add Student button below to register a student.',
+                      onResolve: _openAddStudentPanel,
+                      buttonLabel: 'Add Student',
+                      buttonIcon: Icons.add,
                     )
                   : ListView.separated(
                       itemCount: filteredStudents.length,
@@ -404,8 +409,3 @@ String generatePasscode() {
   var rng = Random();
   return (rng.nextInt(900000) + 100000).toString();
 }
-
-// 2. UPDATE MOCK DATA
-
-// Student("1", "John Doe", "REG/2024/0001", "JSS 1", "123456", true),
-// Student("2", "Jane Smith", "REG/2024/0002", "SSS 2", "654321", true),

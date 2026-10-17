@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:cbt_admin_section/services/teacher_postgres_service.dart';
-import 'package:cbt_admin_section/widgets/fallback.dart';
-import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
 import 'package:cbt_admin_section/screens/admin_home.dart';
+import 'package:cbt_admin_section/services/teacher_postgres_service.dart';
+import 'package:cbt_admin_section/widgets/add_teacher_dialog.dart';
+import 'package:cbt_admin_section/widgets/fallback.dart';
 
 class Teacher {
   String id;
@@ -52,13 +52,6 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     setState(() => _isLoading = true);
 
     try {
-      /* final teachers = await postgresService.getTeachers();
-      await Future.delayed(Duration(seconds: 1));
-      if (!mounted) return;
-      setState(() {
-        _teachers = teachers;
-        _isLoading = false;
-      }); */
       final List<dynamic> response = await Supabase.instance.client
           .from('teachers')
           .select()
@@ -82,14 +75,6 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
         });
       }
     } catch (e) {
-      /* if (mounted) {
-        setState(() => _isLoading = false);
-        setState(() => _hasInternetError = true);
-        // Show error if DB is down
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("DB Error: $e"), backgroundColor: Colors.red),
-        );
-      } */
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -117,7 +102,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
       context: context,
       barrierLabel: "Close",
       // barrierColor: Colors.black.withAlpha(127), // Dims the background
-      transitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (context, animation, secondaryAnimation) {
         return Padding(
           padding: EdgeInsetsGeometry.all(20.0),
@@ -152,26 +137,6 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
                         ),
                       ),
                     );
-
-                    /* if (!mounted) return;
-                    setState(() => _isLoading = true);
-                    await postgresService.insertTeacher(
-                      context,
-                      Teacher(
-                        DateTime.now().toString(),
-                        newTeacherData['name'],
-                        newTeacherData['email'],
-                        newTeacherData['subject'],
-                        newTeacherData['password'],
-                      ),
-                    ); */
-
-                    /* await supabaseService.createTeacherAccount(
-                      name: newTeacherData['name'],
-                      email: newTeacherData['email'],
-                      password: newTeacherData['password'],
-                      subjects: [newTeacherData['subject']],
-                    ); */
 
                     if (!mounted) return;
                     await _fetchTeachersFromSupabase(); // Refresh the list after adding
@@ -208,11 +173,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     final filteredTeachers = _searchQuery.isEmpty
         ? _teachers
         : _teachers
-              .where(
-                (teacher) => teacher.fullName.toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
-                ),
-              )
+              .where((teacher) => teacher.fullName.contains(_searchQuery))
               .toList();
 
     return Padding(

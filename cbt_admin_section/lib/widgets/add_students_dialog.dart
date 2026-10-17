@@ -20,18 +20,21 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      // title: const Text("Register Student"),
-      constraints: BoxConstraints(maxWidth: 400, maxHeight: 700),
-      content: Padding(
-        padding: const EdgeInsets.all(7.0),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        color: Theme.of(context).cardTheme.color,
+      ),
+      constraints: BoxConstraints(minWidth: 500),
+      child: Padding(
+        padding: const EdgeInsets.all(28.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               "lib/assets/images/register_student.png",
               fit: BoxFit.contain,
-              height: 190,
+              height: 150,
             ),
             SizedBox(height: 5.0),
             Divider(
@@ -62,7 +65,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                       validator: (name) =>
                           name == null ? "Please, enter your name" : null,
                     ),
-                    const SizedBox(height: 5.0),
+                    const SizedBox(height: 10.0),
                     TextFormField(
                       controller: regCtrl,
                       maxLength: 4,
@@ -74,7 +77,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                           ? "Please, enter your registration number"
                           : null,
                     ),
-                    const SizedBox(height: 5.0),
+                    const SizedBox(height: 10.0),
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: 'Select Your Class',
@@ -93,7 +96,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                       validator: (stdClass) =>
                           stdClass == null ? 'Please select your class' : null,
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 15),
                     SizedBox(
                       width: double.maxFinite,
                       height: 50,
@@ -116,7 +119,7 @@ class _AddStudentsDialogState extends State<AddStudentsDialog> {
                         label: Text("Save", style: TextStyle(fontSize: 16)),
                       ),
                     ),
-                    SizedBox(height: 5.0),
+                    SizedBox(height: 10.0),
                     SizedBox(
                       width: double.maxFinite,
                       height: 50,
