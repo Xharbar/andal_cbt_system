@@ -49,7 +49,10 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
 
   Future<void> _fetchTeachersFromSupabase() async {
     // if (!mounted) return;
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _hasInternetError = false;
+    });
 
     try {
       final List<dynamic> response = await Supabase.instance.client
@@ -179,10 +182,11 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
@@ -199,22 +203,20 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
               ?_teachers.isNotEmpty
                   ? Row(
                       children: [
-                        Expanded(
-                          child: TextField(
-                            onChanged: (value) =>
-                                setState(() => _searchQuery = value),
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.search),
-                              hintText: 'Search',
-                              hintStyle: TextStyle(color: Colors.white70),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 10.0,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              constraints: BoxConstraints(maxWidth: 200),
+                        TextField(
+                          onChanged: (value) =>
+                              setState(() => _searchQuery = value),
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.search),
+                            hintText: 'Search',
+                            hintStyle: TextStyle(color: Colors.white70),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10.0,
                             ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            constraints: BoxConstraints(maxWidth: 300.0),
                           ),
                         ),
                         SizedBox(width: 10.0),
@@ -244,6 +246,7 @@ class _TeacherManagementPageState extends State<TeacherManagementPage> {
           Expanded(
             flex: 2,
             child: Row(
+              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
